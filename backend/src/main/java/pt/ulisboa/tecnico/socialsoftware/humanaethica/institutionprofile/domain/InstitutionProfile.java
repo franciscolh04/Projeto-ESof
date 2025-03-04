@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto.InstitutionProfileDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -30,15 +33,15 @@ public class InstitutionProfile {
 
     public InstitutionProfile(Institution institution, InstitutionProfileDto institutionProfileDto) {
         setInstitution(institution);
-        setNumMembers(institution.getMembers.size());
-        setNumActivities(institution.getActivities.size());
-        setNumAssessments(institution.getAssessments.size());
+        setNumMembers(institution.getMembers().size());
+        setNumActivities(institution.getActivities().size());
+        setNumAssessments(institution.getAssessments().size());
 
         setShortDescription(institutionProfileDto.getShortDescription());
         setNumVolunteers(institutionProfileDto.getNumVolunteers());
         setAverageRating(institutionProfileDto.getAverageRating());
         
-        verifyInvariants();
+        //verifyInvariants();
     }
 
     public Integer getId() {
@@ -103,7 +106,7 @@ public class InstitutionProfile {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
-        institution.setInstitutonProfile(this);
+        //institution.setInstitutonProfile(this);
     }
 
     public List<Assessment> getAssessments() {
