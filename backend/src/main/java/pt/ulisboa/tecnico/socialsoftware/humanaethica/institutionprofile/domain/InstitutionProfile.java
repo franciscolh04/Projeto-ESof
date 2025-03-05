@@ -1,7 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto.InstitutionProfileDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import jakarta.persistence.*;
@@ -33,15 +35,11 @@ public class InstitutionProfile {
 
     public InstitutionProfile(Institution institution, InstitutionProfileDto institutionProfileDto) {
         setInstitution(institution);
-        setNumMembers(institution.getMembers().size());
-        setNumActivities(institution.getActivities().size());
-        setNumAssessments(institution.getAssessments().size());
+    
+        updateInstitutionProfile();
 
         setShortDescription(institutionProfileDto.getShortDescription());
-        setNumVolunteers(institutionProfileDto.getNumVolunteers());
-        setAverageRating(institutionProfileDto.getAverageRating());
-        
-        //verifyInvariants();
+        // verifyInstitutionDescriptionInvariant()
     }
 
     public Integer getId() {
@@ -106,7 +104,7 @@ public class InstitutionProfile {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
-        //institution.setInstitutonProfile(this);
+        institution.setInstitutionProfile(this);
     }
 
     public List<Assessment> getAssessments() {
@@ -123,6 +121,57 @@ public class InstitutionProfile {
 
     public void removeAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
+    }
+
+    public void updateInstitutionProfile() {
+        setNumMembers(institution.getMembers().size());
+        setNumActivities(institution.getActivities().size());
+        setNumAssessments(institution.getAssessments().size());
+        updateAssements();
+        updateNumVolunteers();
+        updateAverageRating();
+
+        //verifyAssessmentInvariants();
+    }
+
+    public void updateAssements() {
+
+        // IMPORTANT: updateNumAssessments() must be called before this method
+        // 10 is the maximum number of assessments before the invariants
+        // take any effect
+
+        if (numAssessments != 10) {
+            assessments = institution.getAssessments();
+        }
+        else{
+            // Select half of the assessments (guarantees the invariants)
+            assessments = institution.getAssessments().stream()
+            .sorted((a1, a2) -> a2.getReviewDate().compareTo(a1.getReviewDate()))
+            .limit(numAssessments/2)
+            .toList();
+        }
+
+    }
+
+    public void updateNumVolunteers() {
+        
+        numVolunteers = institution.getActivities().stream()
+        .mapToInt(Activity::getNumberOfParticipatingVolunteers).sum();
+
+    }
+
+    public void updateAverageRating() {
+
+        // IMPORTANT: updateNumVolunteers() must be called before this method
+
+        double averageRating = institution.getActivities()
+        .stream()
+        .flatMap(activity -> activity.getParticipations().stream()) 
+        .mapToDouble(Participation::getVolunteerRating)
+        .sum(); 
+
+        averageRating = averageRating / numVolunteers;
+
     }
 
 }
