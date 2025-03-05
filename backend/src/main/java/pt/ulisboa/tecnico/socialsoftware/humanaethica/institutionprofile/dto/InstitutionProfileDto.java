@@ -21,7 +21,7 @@ public class InstitutionProfileDto {
 
     public InstitutionProfileDto() {}
 
-    public InstitutionProfileDto(InstitutionProfile institutionProfile, boolean deepCopyAssessments) {
+    public InstitutionProfileDto(InstitutionProfile institutionProfile) {
         this.shortDescription = institutionProfile.getShortDescription();
         this.numMembers = institutionProfile.getNumMembers();
         this.numActivities = institutionProfile.getNumActivities();
@@ -29,12 +29,10 @@ public class InstitutionProfileDto {
         this.numVolunteers = institutionProfile.getNumVolunteers();
         this.averageRating = institutionProfile.getAverageRating();
         this.institutionId = institutionProfile.getInstitution().getId();
-
-        if (deepCopyAssessments) {
-            this.assessments = institutionProfile.getAssessments().stream()
-                .map(assessment->new AssessmentDto(assessment))
-                .toList();
-        }
+        this.assessments = institutionProfile.getAssessments().stream()
+            .map(assessment->new AssessmentDto(assessment))
+            .toList();
+        
     }
 
     public String getShortDescription() {
