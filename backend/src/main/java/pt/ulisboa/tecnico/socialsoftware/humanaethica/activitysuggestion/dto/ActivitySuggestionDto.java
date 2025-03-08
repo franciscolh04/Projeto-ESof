@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain.ActivitySuggestion;
-import jakarta.persistence.*;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain.ActivitySuggestion.State;
+
 import java.time.LocalDateTime;
 
 public class ActivitySuggestionDto {
