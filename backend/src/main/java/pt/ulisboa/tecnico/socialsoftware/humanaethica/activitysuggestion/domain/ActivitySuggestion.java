@@ -1,0 +1,153 @@
+package pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+
+@Entity
+@Table(name = "activity_suggestion")
+public class ActivitySuggestion {
+
+    public enum State {IN_REVIEW, APPROVED, REJECTED}
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    private String name;
+    private String description;
+    private String region;
+    private LocalDateTime creationDate;
+    private LocalDateTime applicationDeadline;
+    private LocalDateTime startingDate;
+    private LocalDateTime endingDate;
+    private Integer participantsNumberLimit;
+
+    @Enumerated(EnumType.STRING)
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "institution_id", nullable = false)
+    private Institution institution;
+
+    @ManyToOne
+    @JoinColumn(name = "volunteer_id", nullable = false)
+    private Volunteer volunteer;
+
+    public ActivitySuggestion() {}
+
+    public ActivitySuggestion(Institution institution, Volunteer volunteer, ActivitySuggestionDto activitySuggestionDto) {
+        setInstitution(institution);
+        setVolunteer(volunteer);
+
+        setName(activitySuggestionDto.getName());
+        setDescription(activitySuggestionDto.getDescription());
+        setRegion(activitySuggestionDto.getRegion());
+        setApplicationDeadline(activitySuggestionDto.getApplicationDeadline());
+        setStartingDate(activitySuggestionDto.getStartingDate());
+        setEndingDate(activitySuggestionDto.getEndingDate());
+        setParticipantsNumberLimit(activitySuggestionDto.getParticipantsNumberLimit());
+
+        this.creationDate = LocalDateTime.now();
+        this.state = State.IN_REVIEW;
+
+        // TODO: verifyInvariants();
+    }
+
+    // Getters e Setters
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public LocalDateTime getApplicationDeadline() {
+        return applicationDeadline;
+    }
+
+    public void setApplicationDeadline(LocalDateTime applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+    }
+
+    public LocalDateTime getStartingDate() {
+        return startingDate;
+    }
+
+    public void setStartingDate(LocalDateTime startingDate) {
+        this.startingDate = startingDate;
+    }
+
+    public LocalDateTime getEndingDate() {
+        return endingDate;
+    }
+
+    public void setEndingDate(LocalDateTime endingDate) {
+        this.endingDate = endingDate;
+    }
+
+    public Integer getParticipantsNumberLimit() {
+        return participantsNumberLimit;
+    }
+
+    public void setParticipantsNumberLimit(Integer participantsNumberLimit) {
+        this.participantsNumberLimit = participantsNumberLimit;
+    }
+
+    public ActivityState getState() {
+        return state;
+    }
+
+    public void setState(ActivityState state) {
+        this.state = state;
+    }
+
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+    public Volunteer getVolunteer() {
+        return volunteer;
+    }
+
+    public void setVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
+
+}
