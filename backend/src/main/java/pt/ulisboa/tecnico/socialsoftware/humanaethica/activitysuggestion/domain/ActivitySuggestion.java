@@ -1,6 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user/domain.Volunteer.java
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -126,11 +130,11 @@ public class ActivitySuggestion {
         this.participantsNumberLimit = participantsNumberLimit;
     }
 
-    public ActivityState getState() {
+    public State getState() {
         return state;
     }
 
-    public void setState(ActivityState state) {
+    public void setState(State state) {
         this.state = state;
     }
 
