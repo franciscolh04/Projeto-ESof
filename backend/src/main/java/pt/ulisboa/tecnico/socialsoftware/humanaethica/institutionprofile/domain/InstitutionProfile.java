@@ -28,7 +28,7 @@ public class InstitutionProfile {
     @OneToOne
     private Institution institution;
 
-    @OneToMany(mappedBy = "institution_profile", fetch = FetchType.LAZY )
+    @OneToMany(mappedBy = "institutionProfile", fetch = FetchType.LAZY )
     private List<Assessment> assessments = new ArrayList<>();
 
     public InstitutionProfile() {}
@@ -136,20 +136,9 @@ public class InstitutionProfile {
 
     public void updateAssements() {
 
-        // IMPORTANT: updateNumAssessments() must be called before this method
-        // 10 is the maximum number of assessments before the invariants
-        // take any effect
-
-        if (numAssessments != 10) {
-            assessments = institution.getAssessments();
-        }
-        else{
-            // Select half of the assessments (guarantees the invariants)
-            assessments = institution.getAssessments().stream()
-            .sorted((a1, a2) -> a2.getReviewDate().compareTo(a1.getReviewDate()))
-            .limit(numAssessments/2)
-            .toList();
-        }
+        // TODO: set a maximum number of assessments to be displayed based
+        // on user input
+        assessments = institution.getAssessments();
 
     }
 

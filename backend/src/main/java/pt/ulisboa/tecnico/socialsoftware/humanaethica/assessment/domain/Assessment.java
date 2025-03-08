@@ -26,6 +26,7 @@ public class Assessment {
     @ManyToOne
     private Volunteer volunteer;
     @ManyToOne
+    @JoinColumn(name = "institution_profile_id")
     private InstitutionProfile institutionProfile;
 
     public Assessment() {}
@@ -70,6 +71,7 @@ public class Assessment {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+        this.institution.addAssessment(this);
     }
 
     public Volunteer getVolunteer() {
