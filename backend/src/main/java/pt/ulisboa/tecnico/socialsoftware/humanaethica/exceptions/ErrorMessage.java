@@ -70,6 +70,7 @@ public enum ErrorMessage {
     // Institution Profile
     INVALID_INSTITUTION_PROFILE("Invalid institution profile"),
     INVALID_SHORT_DESCRIPTION("Invalid short description"),
+    INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT("Institution profile description is too short"),
 
     ;
 

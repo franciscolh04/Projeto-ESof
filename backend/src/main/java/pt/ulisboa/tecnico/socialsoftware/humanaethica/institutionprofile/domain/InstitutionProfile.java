@@ -7,6 +7,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Parti
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import jakarta.persistence.*;
+
+import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +42,7 @@ public class InstitutionProfile {
         updateInstitutionProfile();
 
         setShortDescription(institutionProfileDto.getShortDescription());
-        // verifyInstitutionDescriptionInvariant()
+        verifyInstitutionDescription();
     }
 
     public Integer getId() {
@@ -161,6 +164,14 @@ public class InstitutionProfile {
 
         averageRating = averageRating / numVolunteers;
 
+    }
+
+    public void verifyInstitutionDescription() {
+        if (shortDescription == null) {
+            throw new HEException(INVALID_SHORT_DESCRIPTION);
+        } else if (shortDescription.trim().length() < 10) {
+            throw new HEException(INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT);
+        }
     }
 
 }
