@@ -1,0 +1,20 @@
+package pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto.InstitutionProfileDto;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
+public class InstitutionProfileController {
+    @Autowired
+    InstitutionProfileService institutionProfileService;
+
+    @PostMapping("/institutions/{institutionId}/profile")
+    @PreAuthorize("hasRole('ROLE_MEMBER')")
+    public InstitutionProfileDto createInstitutionProfile(@PathVariable Integer institutionId, @Valid @RequestBody InstitutionProfileDto institutionProfileDto) {
+        return institutionProfileService.createInstitutionProfile(institutionId, institutionProfileDto);
+    }
+}
