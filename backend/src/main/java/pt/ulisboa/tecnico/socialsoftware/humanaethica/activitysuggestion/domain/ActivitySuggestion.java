@@ -158,13 +158,20 @@ public class ActivitySuggestion {
     private void verifyInvariants() {
 
         descriptionHasMinimumLength();
-        activitySuggestionCannotBeDuplicated();
+        deadlineDateIsAtLeast7DaysAfterCreationDate();
 
     }
 
     private void descriptionHasMinimumLength() {
         if (this.description == null || description.length() < 10) {
-            throw new HEException(ACTIVITY_SUGGESTION_TOO_SHORT);
+            throw new HEException(ACTIVITY_SUGGESTION_DESCRIPTION_TOO_SHORT);
+        }
+    }
+
+    // O prazo de inscrição das atividades sugeridas deve ser de pelo menos 7 dias depois da data da proposta.
+    private void deadlineDateIsAtLeast7DaysAfterCreationDate() {
+        if (this.applicationDeadline.isBefore(this.creationDate.plusDays(7))) {
+            throw new HEException(ACTIVITY_SUGGESTION_DEADLINE_TOO_SOON);
         }
     }
 
