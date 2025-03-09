@@ -23,22 +23,17 @@ public class InstitutionProfileService {
     private InstitutionRepository institutionRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void createInstitutionProfile(InstitutionProfileDto institutionProfileDto) {
+    public InstitutionProfileDto createInstitutionProfile(Integer institutionId, InstitutionProfileDto institutionProfileDto) {
         
-        if (institutionProfileDto == null) {
-            throw new HEException(INVALID_INSTITUTION_PROFILE);
-        }
+        if (institutionProfileDto == null) throw new HEException(INVALID_INSTITUTION_PROFILE);
+        if (institutionProfileDto.getShortDescription().trim().length() == 0) throw new HEException(INVALID_SHORT_DESCRIPTION);
 
-        if (institutionProfileDto.getShortDescription().trim().length() == 0) {
-            throw new HEException(INVALID_SHORT_DESCRIPTION);
-        }
-
-        Institution institution = institutionRepository.findById(institutionProfileDto.getInstitutionId())
+        Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
 
         InstitutionProfile institutionProfile = new InstitutionProfile(institution, institutionProfileDto);
 
-        institutionProfileRepository.save(institutionProfile);
+        return new InstitutionProfileDto(institutionProfileRepository.save(institutionProfile));
     }
 
 }
