@@ -151,7 +151,7 @@ public class InstitutionProfile {
 
         // TODO: set a maximum number of assessments to be displayed based
         // on user input
-        assessments = institution.getAssessments();
+        assessments = new ArrayList<>(institution.getAssessments());
 
     }
 
