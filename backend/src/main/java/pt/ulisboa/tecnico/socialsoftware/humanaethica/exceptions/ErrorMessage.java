@@ -66,6 +66,11 @@ public enum ErrorMessage {
     REPORT_ACTIVTIY_IS_ALREADY_REPORTED("The activity is already reported"),
     REPORT_AFTER_ACTIVTY_CLOSED("The activity period is already closed"),
     REPORT_NOT_FOUND("Report not found with id %d"),
+
+    // Institution Profile
+    INVALID_INSTITUTION_PROFILE("Invalid institution profile"),
+    INVALID_SHORT_DESCRIPTION("Invalid short description"),
+
     ;
 
     public final String label;
