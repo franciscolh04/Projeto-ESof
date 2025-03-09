@@ -83,7 +83,7 @@ public class InstitutionProfileDto {
         this.averageRating = averageRating;
     }
 
-    public Integer getInstitution() {
+    public Integer getInstitutionId() {
         return institutionId;
     }
 
