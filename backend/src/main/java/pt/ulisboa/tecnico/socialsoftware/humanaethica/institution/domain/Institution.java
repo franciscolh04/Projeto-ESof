@@ -182,6 +182,7 @@ public class Institution {
 
     public void addAssessment(Assessment assessment) {
         this.assessments.add(assessment);
+        assessment.setInstitutionProfile(institutionProfile);
     }
 
     public String generateConfirmationToken() {

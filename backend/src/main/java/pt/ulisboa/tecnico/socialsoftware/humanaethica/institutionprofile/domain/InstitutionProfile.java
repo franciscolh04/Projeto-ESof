@@ -41,6 +41,8 @@ public class InstitutionProfile {
     
         updateInstitutionProfile();
 
+        updateAssementsInstitutionProfile();
+
         setShortDescription(institutionProfileDto.getShortDescription());
         verifyInstitutionDescription();
     }
@@ -126,6 +128,14 @@ public class InstitutionProfile {
         this.assessments.remove(assessment);
     }
 
+    public void updateAssementsInstitutionProfile() {
+        // ensure that the institution profile is set for each assessment
+        // even if they were crated before the institution profile
+        for (Assessment assessment : assessments) {
+            assessment.setInstitutionProfile(this);
+        }
+    }
+
     public void updateInstitutionProfile() {
         setNumMembers(institution.getMembers().size());
         setNumActivities(institution.getActivities().size());
@@ -156,7 +166,7 @@ public class InstitutionProfile {
 
         // IMPORTANT: updateNumVolunteers() must be called before this method
 
-        double averageRating = institution.getActivities()
+        averageRating = institution.getActivities()
         .stream()
         .flatMap(activity -> activity.getParticipations().stream()) 
         .mapToDouble(Participation::getVolunteerRating)
