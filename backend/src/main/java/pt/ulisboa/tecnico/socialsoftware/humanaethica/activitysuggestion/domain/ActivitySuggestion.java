@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -56,7 +57,7 @@ public class ActivitySuggestion {
         this.creationDate = LocalDateTime.now();
         this.state = State.IN_REVIEW;
 
-        // TODO: verifyInvariants();
+        verifyInvariants();
     }
 
     // Getters e Setters
@@ -151,6 +152,20 @@ public class ActivitySuggestion {
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
+    }
+
+
+    private void verifyInvariants() {
+
+        descriptionHasMinimumLength();
+        activitySuggestionCannotBeDuplicated();
+
+    }
+
+    private void descriptionHasMinimumLength() {
+        if (this.description == null || description.length() < 10) {
+            throw new HEException(ACTIVITY_SUGGESTION_TOO_SHORT);
+        }
     }
 
 }
