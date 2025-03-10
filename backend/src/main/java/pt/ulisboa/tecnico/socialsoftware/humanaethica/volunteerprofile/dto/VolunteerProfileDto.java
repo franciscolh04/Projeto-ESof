@@ -2,6 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.domain.VolunteerProfile;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VolunteerProfileDto {
     private Integer id;
@@ -10,6 +14,7 @@ public class VolunteerProfileDto {
     private Integer numTotalParticipations;
     private Integer numTotalAssessments;
     private Double averageRating;
+    private List<Participation> selectedParticipations = new ArrayList<>();
 
     public VolunteerProfileDto() {
     }
@@ -21,6 +26,7 @@ public class VolunteerProfileDto {
         setNumTotalParticipations(volunteerProfile.getNumTotalParticipations());
         setNumTotalAssessments(volunteerProfile.getNumTotalAssessments());
         setAverageRating(volunteerProfile.getAverageRating());
+        setSelectedParticipations(volunteerProfile.getSelectedParticipations());
     }
 
     public void setId(Integer id) {
@@ -69,6 +75,14 @@ public class VolunteerProfileDto {
 
     public Double getAverageRating() {
         return averageRating;
+    }
+
+    public List<Participation> getSelectedParticipations() {
+        return selectedParticipations;
+    }
+
+    public void setSelectedParticipations(List<Participation> selectedParticipations) {
+        this.selectedParticipations = selectedParticipations;
     }
 
     @Override

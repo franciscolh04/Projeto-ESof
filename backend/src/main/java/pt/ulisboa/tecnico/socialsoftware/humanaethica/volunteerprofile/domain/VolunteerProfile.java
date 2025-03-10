@@ -49,6 +49,7 @@ public class VolunteerProfile {
         setNumTotalParticipations(volunteerProfileDto.getNumTotalParticipations());
         setNumTotalAssessments(volunteerProfileDto.getNumTotalAssessments());
         setAverageRating(volunteerProfileDto.getAverageRating());
+        setSelectedParticipations(volunteerProfileDto.getSelectedParticipations());
 
         verifyInvariants();
     }
