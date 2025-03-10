@@ -171,7 +171,7 @@ public class ActivitySuggestion {
     }
 
     private void activitySuggestionByVolunteerIsUnique() {
-        if (this.volunteer.getActivitySuggestion().stream()
+        if (this.volunteer.getActivitySuggestions().stream()
                 .anyMatch(activitySuggestion -> activitySuggestion != this && activitySuggestion.getName().equals(this.getName()))) {
             throw new HEException(ACTIVITY_SUGGESTION_ALREADY_MADE_BY_VOLUNTEER);
         }
