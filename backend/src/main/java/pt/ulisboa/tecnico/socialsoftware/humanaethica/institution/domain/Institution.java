@@ -50,7 +50,7 @@ public class Institution {
     @OneToMany(mappedBy = "institution" )
     private List<Assessment> assessments = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "institution", orphanRemoval = true)
     private InstitutionProfile institutionProfile;
 
     public Institution() {

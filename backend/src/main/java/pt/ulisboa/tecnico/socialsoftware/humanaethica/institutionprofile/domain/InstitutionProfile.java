@@ -29,6 +29,7 @@ public class InstitutionProfile {
     private Double averageRating;
 
     @OneToOne
+    @JoinColumn(name = "institution_id")
     private Institution institution;
 
     @OneToMany(mappedBy = "institutionProfile", fetch = FetchType.LAZY )
@@ -180,7 +181,7 @@ public class InstitutionProfile {
         if (shortDescription == null) {
             throw new HEException(INVALID_SHORT_DESCRIPTION);
         } else if (shortDescription.trim().length() < 10) {
-            throw new HEException(INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT);
+            throw new HEException(INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT,shortDescription.trim().length());
         }
     }
 

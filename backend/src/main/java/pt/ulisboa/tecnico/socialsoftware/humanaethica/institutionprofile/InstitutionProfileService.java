@@ -34,16 +34,18 @@ public class InstitutionProfileService {
         Member member = (Member) userRepository.findById(userId).orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
         
         if (institutionProfileDto == null) throw new HEException(INVALID_INSTITUTION_PROFILE);
-        if (institutionProfileDto.getShortDescription().trim().length() == 0) throw new HEException(INVALID_SHORT_DESCRIPTION);
+        if (institutionProfileDto.getShortDescription() == null) throw new HEException(INVALID_SHORT_DESCRIPTION);
         
+        if (institutionId == null) throw new HEException(INSTITUTION_NOT_FOUND);
         Institution institution = institutionRepository.findById(institutionId)
         .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
 
-        if (member.getInstitution().getId() != institutionId) throw new HEException(MEMBER_NOT_IN_INSTITUTION);
+        // FIX:  if (member.getInstitution().getId() != institutionId) throw new HEException(MEMBER_NOT_IN_INSTITUTION);
 
         InstitutionProfile institutionProfile = new InstitutionProfile(institution, institutionProfileDto);
+        institutionProfileRepository.save(institutionProfile);
 
-        return new InstitutionProfileDto(institutionProfileRepository.save(institutionProfile));
+        return new InstitutionProfileDto(institutionProfile);
     }
 
 }
