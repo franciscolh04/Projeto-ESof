@@ -5,10 +5,13 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Parti
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.dto.VolunteerProfileDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
+
 
 @Entity
 @Table(name = "volunteerprofile")
@@ -46,6 +49,8 @@ public class VolunteerProfile {
         setNumTotalParticipations(volunteerProfileDto.getNumTotalParticipations());
         setNumTotalAssessments(volunteerProfileDto.getNumTotalAssessments());
         setAverageRating(volunteerProfileDto.getAverageRating());
+
+        verifyInvariants();
     }
 
     public Integer getId() {
@@ -115,5 +120,15 @@ public class VolunteerProfile {
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
+    }
+
+    private void verifyInvariants() {
+        shortBioHasMinimumLength();
+    }
+
+    private void shortBioHasMinimumLength() {
+        if (shortBio == null || shortBio.trim().length() < 10) {
+            throw new HEException(SHORT_BIO_TOO_SHORT);
+        }
     }
 }
