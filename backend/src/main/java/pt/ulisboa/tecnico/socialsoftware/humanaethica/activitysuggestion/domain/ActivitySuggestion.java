@@ -159,10 +159,9 @@ public class ActivitySuggestion {
 
 
     private void verifyInvariants() {
-
         descriptionHasMinimumLength();
+        activitySuggestionByVolunteerIsUnique();
         deadlineDateIsAtLeast7DaysAfterCreationDate();
-
     }
 
     private void descriptionHasMinimumLength() {
@@ -171,7 +170,13 @@ public class ActivitySuggestion {
         }
     }
 
-    // O prazo de inscrição das atividades sugeridas deve ser de pelo menos 7 dias depois da data da proposta.
+    private void activitySuggestionByVolunteerIsUnique() {
+        if (this.volunteer.getActivitySuggestion().stream()
+                .anyMatch(activitySuggestion -> activitySuggestion != this && activitySuggestion.getName().equals(this.getName()))) {
+            throw new HEException(ACTIVITY_SUGGESTION_ALREADY_MADE_BY_VOLUNTEER);
+        }
+    }
+
     private void deadlineDateIsAtLeast7DaysAfterCreationDate() {
         if (this.applicationDeadline.isBefore(this.creationDate.plusDays(7))) {
             throw new HEException(ACTIVITY_SUGGESTION_DEADLINE_TOO_SOON);
