@@ -33,7 +33,7 @@ public class VolunteerProfile {
 
 
     @OneToMany(mappedBy = "volunteerProfile")
-    private List<Participation> participations = new ArrayList<>();
+    private List<Participation> selectedParticipations = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "volunteer_id", unique = true)
@@ -98,20 +98,20 @@ public class VolunteerProfile {
     }
 
 
-    public List<Participation> getParticipations() {
-        return participations;
+    public List<Participation> getSelectedParticipations() {
+        return selectedParticipations;
     }
 
-    public void addParticipation(Participation participation) {
-        this.participations.add(participation);
+    public void addSelectedParticipation(Participation participation) {
+        this.selectedParticipations.add(participation);
     }
 
-    public void deleteParticipation(Participation participation) {
-        this.participations.remove(participation);
+    public void deleteSelectedParticipation(Participation participation) {
+        this.selectedParticipations.remove(participation);
     }
 
-    public void setParticipations(List<Participation> participations) {
-        this.participations = participations;
+    public void setSelectedParticipations(List<Participation> selectedParticipations) {
+        this.selectedParticipations = selectedParticipations;
     }
 
     public Volunteer getVolunteer() {
@@ -124,11 +124,19 @@ public class VolunteerProfile {
 
     private void verifyInvariants() {
         shortBioHasMinimumLength();
+        selectedParticipationsAreAssessed();
     }
 
     private void shortBioHasMinimumLength() {
         if (shortBio == null || shortBio.trim().length() < 10) {
             throw new HEException(SHORT_BIO_TOO_SHORT);
+        }
+    }
+
+    private void selectedParticipationsAreAssessed() {
+        if (this.selectedParticipations.stream()
+                .anyMatch(participation -> participation.getMemberRating() == null)) {
+            throw new HEException(SELECTED_PARTICIPATION_NOT_ASSESSED);
         }
     }
 }

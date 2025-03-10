@@ -142,7 +142,7 @@ public class Participation {
 
     public void setVolunteerProfile(VolunteerProfile volunteerProfile) {
         this.volunteerProfile = volunteerProfile;
-        this.volunteerProfile.addParticipation(this);
+        this.volunteerProfile.addSelectedParticipation(this);
     }
 
     private void verifyInvariants() {

@@ -66,7 +66,10 @@ public enum ErrorMessage {
     REPORT_ACTIVTIY_IS_ALREADY_REPORTED("The activity is already reported"),
     REPORT_AFTER_ACTIVTY_CLOSED("The activity period is already closed"),
     REPORT_NOT_FOUND("Report not found with id %d"),
+
+    // VolunteerProfile
     SHORT_BIO_TOO_SHORT("Short bio must be at least 10 characters"),
+    SELECTED_PARTICIPATION_NOT_ASSESSED("All selected participations must be assessed."),
     ;
 
     public final String label;
