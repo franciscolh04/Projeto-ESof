@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institu
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
+import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -33,11 +34,11 @@ public class ActivitySuggestion {
     private State state;
 
     @ManyToOne
-    @JoinColumn(name = "institution_id", nullable = false)
+    @JoinColumn(name = "institution", nullable = false)
     private Institution institution;
 
     @ManyToOne
-    @JoinColumn(name = "volunteer_id", nullable = false)
+    @JoinColumn(name = "volunteer", nullable = false)
     private Volunteer volunteer;
 
     public ActivitySuggestion() {}
@@ -144,6 +145,7 @@ public class ActivitySuggestion {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+        institution.addActivitySuggestion(this);
     }
 
     public Volunteer getVolunteer() {
@@ -152,6 +154,7 @@ public class ActivitySuggestion {
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
+        volunteer.addActivitySuggestion(this);
     }
 
 

@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain.ActivitySuggestion;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
 import java.time.LocalDateTime;
@@ -45,6 +46,9 @@ public class Institution {
 
     @OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Activity> activities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<ActivitySuggestion> activitySuggestions = new ArrayList<>();
 
     @OneToMany(mappedBy = "institution" )
     private List<Assessment> assessments = new ArrayList<>();
@@ -170,6 +174,18 @@ public class Institution {
 
     public void addActivity(Activity activity) {
         this.activities.add(activity);
+    }
+
+    public void setActivitySuggestions(List<ActivitySuggestion> activitySuggestions) {
+        this.activitySuggestions = activitySuggestions;
+    }
+
+    public List<ActivitySuggestion> getActivitySuggestions() {
+        return activitySuggestions;
+    }
+
+    public void addActivitySuggestion(ActivitySuggestion activitySuggestion) {
+        this.activitySuggestions.add(activitySuggestion);
     }
 
     public List<Assessment> getAssessments() {
