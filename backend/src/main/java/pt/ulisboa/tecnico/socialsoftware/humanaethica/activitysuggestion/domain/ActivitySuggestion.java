@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "activity_suggestion")
+@Table(name = "activitySuggestions")
 public class ActivitySuggestion {
 
     public enum State {IN_REVIEW, APPROVED, REJECTED}
