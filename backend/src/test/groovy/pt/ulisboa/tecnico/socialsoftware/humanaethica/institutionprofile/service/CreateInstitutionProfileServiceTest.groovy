@@ -22,9 +22,11 @@ class CreateInstitutionProfileServiceTest extends SpockTest {
     InstitutionProfileRepository institutionProfileRepository
 
     def institution
+    def member
 
     def setup() {
         institution = institutionService.getDemoInstitution()
+        member = authUserService.loginDemoMemberAuth().getUser()
     }
 
     def 'create institution profile' () {
@@ -33,7 +35,7 @@ class CreateInstitutionProfileServiceTest extends SpockTest {
         institutionProfileDto.shortDescription = 'short description'
 
         when:
-        def result = institutionProfileService.createInstitutionProfile(institution.id, institutionProfileDto)
+        def result = institutionProfileService.createInstitutionProfile(member.id, institution.id, institutionProfileDto)
 
         then:
         result.shortDescription == 'short description'
