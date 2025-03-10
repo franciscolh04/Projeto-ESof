@@ -8,11 +8,13 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto.Ins
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+@RestController
+@RequestMapping("/institutionProfile")
 public class InstitutionProfileController {
     @Autowired
     InstitutionProfileService institutionProfileService;
 
-    @PostMapping("/institutions/{institutionId}/profile")
+    @PostMapping("/{institutionId}/profile")
     @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#institutionId, 'INSTITUTION.MEMBER')")
     public InstitutionProfileDto createInstitutionProfile(@PathVariable Integer institutionId, @Valid @RequestBody InstitutionProfileDto institutionProfileDto) {
         return institutionProfileService.createInstitutionProfile(institutionId, institutionProfileDto);
