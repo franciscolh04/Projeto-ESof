@@ -66,6 +66,35 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
         1 * assessment.setInstitutionProfile(_)
     }
 
+    def "create institution profile and violate short description : description=#description"() {
+
+        given:
+        participation.getVolunteerRating() >> 5
+
+        activity.getNumberOfParticipatingVolunteers() >> 3
+        activity.getParticipations() >> [participation]
+
+        institution.getActivities() >> [activity]
+        institution.getMembers() >> [member]
+        institution.getAssessments() >> [assessment]
+        and:
+        institutionProfileDto.shortDescription = description
+
+        when:
+        new InstitutionProfile(institution, institutionProfileDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == errorMessage
+
+        where:
+        description       || errorMessage
+        null              || ErrorMessage.INVALID_SHORT_DESCRIPTION
+        "  "              || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
+        "   1111111 1   " || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
+        "  12345,  8"     || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
+    }
+
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
