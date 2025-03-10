@@ -27,7 +27,7 @@ public class Volunteer extends User {
     @OneToMany(mappedBy = "volunteer")
     private List<Report> reports = new ArrayList<>();
 
-    @OneToOne(mappedBy = "volunteer", optional = true)
+    @OneToOne(mappedBy = "volunteer", cascade = CascadeType.ALL)
     private VolunteerProfile volunteerProfile;
 
     public Volunteer() {

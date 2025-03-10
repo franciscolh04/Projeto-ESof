@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.domain;
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.dto.VolunteerProfileDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +28,12 @@ public class VolunteerProfile {
 
     private Double averageRating;
 
-    @OneToMany(mappedBy = "volunteerprofile")
-    private List<Participation> participations = new ArrayList();
+
+    @OneToMany(mappedBy = "volunteerProfile")
+    private List<Participation> participations = new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name = "volunteer_id", nullable = false)
+    @JoinColumn(name = "volunteer_id", unique = true)
     private Volunteer volunteer;
 
     public VolunteerProfile() {
@@ -89,6 +91,7 @@ public class VolunteerProfile {
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
     }
+
 
     public List<Participation> getParticipations() {
         return participations;
