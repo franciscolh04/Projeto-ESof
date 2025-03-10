@@ -6,6 +6,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollme
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.report.domain.Report;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.domain.VolunteerProfile;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,9 @@ public class Volunteer extends User {
 
     @OneToMany(mappedBy = "volunteer")
     private List<Report> reports = new ArrayList<>();
+
+    @OneToOne(mappedBy = "volunteer", optional = true)
+    private VolunteerProfile volunteerProfile;
 
     public Volunteer() {
     }

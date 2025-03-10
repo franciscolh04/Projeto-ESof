@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.domain;
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.dto.VolunteerProfileDto;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class VolunteerProfile {
     @OneToMany(mappedBy = "volunteerprofile")
     private List<Participation> participations = new ArrayList();
 
+    @OneToOne
+    @JoinColumn(name = "volunteer_id", nullable = false)
     private Volunteer volunteer;
 
     public VolunteerProfile() {
@@ -104,7 +107,7 @@ public class VolunteerProfile {
     }
 
     public Volunteer getVolunteer() {
-        return Volunteer;
+        return volunteer;
     }
 
     public void setVolunteer(Volunteer volunteer) {
