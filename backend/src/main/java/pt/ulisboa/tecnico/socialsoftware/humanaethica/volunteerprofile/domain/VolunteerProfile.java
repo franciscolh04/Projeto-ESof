@@ -126,6 +126,7 @@ public class VolunteerProfile {
     private void verifyInvariants() {
         shortBioHasMinimumLength();
         selectedParticipationsAreAssessed();
+        minimumSelectedParticipationsConstraint();
     }
 
     private void shortBioHasMinimumLength() {
@@ -142,7 +143,7 @@ public class VolunteerProfile {
     }
 
     private void minimumSelectedParticipationsConstraint() {
-        if (this.selectedParticipations.size() < Math.min(numTotalParticipations/2, numTotalAssessments)) {
+        if (this.selectedParticipations != null && numTotalParticipations != null && numTotalAssessments != null && this.selectedParticipations.size() < Math.min(numTotalParticipations / 2, numTotalAssessments)) {
             throw new HEException(SELECTED_PARTICIPATIONS_INVALID_NUMBER);
         }
     }
