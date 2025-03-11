@@ -187,6 +187,7 @@ public class InstitutionProfile {
     public void verifyInvariants(){
         verifyInstitutionDescription();
         verifyAssessmentSelection();
+        verifyRecentAssessments();
     }
 
     public void verifyInstitutionDescription() {
@@ -200,6 +201,29 @@ public class InstitutionProfile {
     public void verifyAssessmentSelection() {
         if (this.numAssessments < institution.getAssessments().size() * 0.5) {
             throw new HEException(INSTITUTION_SELECTED_ASSESSMENTS);
+        }
+    }
+
+    private void verifyRecentAssessments() {
+        if (this.assessments.isEmpty() || this.institution == null || this.institution.getAssessments().isEmpty()) {
+            return;
+        }
+    
+        List<Assessment> institutionAssessments = this.institution.getAssessments();
+    
+        int minRecentAssessments = (int) Math.ceil(institutionAssessments.size() * 0.2);
+    
+        List<Assessment> recentInstitutionAssessments = institutionAssessments.stream()
+                .sorted((a1, a2) -> a2.getReviewDate().compareTo(a1.getReviewDate()))
+                .limit(minRecentAssessments)
+                .toList();
+    
+        long recentAssessmentsInList = this.assessments.stream()
+                .filter(recentInstitutionAssessments::contains)
+                .count();
+    
+        if (recentAssessmentsInList < minRecentAssessments) {
+            throw new HEException(INSTITUTION_MOST_RECENT_ASSESSMENTS);
         }
     }
 
