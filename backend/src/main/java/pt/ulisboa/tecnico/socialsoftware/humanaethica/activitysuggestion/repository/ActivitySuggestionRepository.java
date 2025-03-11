@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion;
+package pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.repository;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

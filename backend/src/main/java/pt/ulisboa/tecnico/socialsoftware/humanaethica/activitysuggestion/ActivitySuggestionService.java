@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain.ActivitySuggestion;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.repository.ActivitySuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository;

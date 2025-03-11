@@ -16,7 +16,7 @@ public class ActivitySuggestionDto {
     private String startingDate;
     private String endingDate;
     private Integer participantsNumberLimit;
-    private State state;
+    private String state;
     private Integer institutionId;
     private Integer volunteerId;
 
@@ -32,7 +32,7 @@ public class ActivitySuggestionDto {
         this.endingDate = DateHandler.toISOString(activitySuggestion.getEndingDate());
         this.applicationDeadline = DateHandler.toISOString(activitySuggestion.getApplicationDeadline());
         this.participantsNumberLimit = activitySuggestion.getParticipantsNumberLimit();
-        this.state = activitySuggestion.getState();
+        this.state = activitySuggestion.getState().name();
         this.institutionId = activitySuggestion.getInstitution().getId();
         this.volunteerId = activitySuggestion.getVolunteer().getId();
     }
@@ -111,11 +111,11 @@ public class ActivitySuggestionDto {
         this.participantsNumberLimit = participantsNumberLimit;
     }
 
-    public State getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(String state) {
         this.state = state;
     }
 
