@@ -29,7 +29,7 @@ public class InstitutionProfile {
     private Double averageRating;
 
     @OneToOne
-    @JoinColumn(name = "institution_id")
+    @JoinColumn(name = "institution_id",unique=true)
     private Institution institution;
 
     @OneToMany(mappedBy = "institutionProfile", fetch = FetchType.LAZY )
@@ -61,7 +61,7 @@ public class InstitutionProfile {
 
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
-        verifyInvariants();
+        verifyInstitutionDescription();
     }
 
     public Integer getNumMembers() {

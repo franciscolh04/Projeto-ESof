@@ -73,8 +73,8 @@ public enum ErrorMessage {
     INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT("Institution profile description is too short (must have at least 10 characters)"),
     MEMBER_NOT_IN_INSTITUTION("Member is not in the institution"),
     INSTITUTION_SELECTED_ASSESSMENTS("At least 50% of the assessments must be selected"),
-    INSTITUTION_MOST_RECENT_ASSESSMENTS("At least 20% of the selected assessments must be the most recent ones")
-
+    INSTITUTION_MOST_RECENT_ASSESSMENTS("At least 20% of the selected assessments must be the most recent ones"),
+    INSTITUTION_PROFILE_NOT_FOUND("Institution Profile not found with Institution id %d")
     ;
 
     public final String label;
