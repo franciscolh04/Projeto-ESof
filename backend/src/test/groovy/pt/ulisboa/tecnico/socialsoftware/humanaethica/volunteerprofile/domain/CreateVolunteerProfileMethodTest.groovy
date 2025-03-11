@@ -58,7 +58,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
 
     @Unroll
     def "create volunteer profile and violate selected participations assessed invariant: memberRating1=#memberRating1 | memberRating2=#memberRating2 | memberRating3=#memberRating3"() {
-        given: "a volunteer profile without selected participations not asse"
+        given: "a volunteer profile with selected participations not assessed"
         VolunteerProfileDto volunteerProfileDto = new VolunteerProfileDto()
         participation1.getMemberRating() >> memberRating1
         participation2.getMemberRating() >> memberRating2
@@ -101,6 +101,32 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         memberRating1  | memberRating2  | memberRating3
         1              | 1              | 1
         3              | 4              | 5
+    }
+
+    @Unroll
+    def "create volunteer profile with minimum selected participations: totalParticipations=#totalParticipations | totalAssessments=#totalAssessments"() {
+        given: "a valid volunteer profile with a valid number of selected participations"
+        VolunteerProfileDto volunteerProfileDto = new VolunteerProfileDto()
+        participation1.getMemberRating() >> VALID_PARTICIPATION_MEMBER_RATING
+        participation2.getMemberRating() >> VALID_PARTICIPATION_MEMBER_RATING
+        participation3.getMemberRating() >> VALID_PARTICIPATION_MEMBER_RATING
+        volunteerProfileDto.setSelectedParticipations([participation1, participation2, participation3])
+        volunteerProfileDto.setNumTotalParticipations(totalParticipations)
+        volunteerProfileDto.setNumTotalAssessments(totalAssessments)
+        volunteerProfileDto.setShortBio(VOLUNTEER_PROFILE_SHORT_BIO_VALID)
+
+
+        when:
+        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteer, volunteerProfileDto)
+
+        then: "no exception should be thrown and the number of selected participations should be valid"
+        volunteerProfile.getSelectedParticipations().size() == 3
+
+        where:
+        totalParticipations  | totalAssessments
+        6                    | 7
+        8                    | 3
+        6                    | 3
     }
 
     @TestConfiguration
