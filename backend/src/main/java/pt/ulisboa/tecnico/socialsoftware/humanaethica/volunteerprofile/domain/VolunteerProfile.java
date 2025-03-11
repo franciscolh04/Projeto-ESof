@@ -42,7 +42,7 @@ public class VolunteerProfile {
     public VolunteerProfile() {
     }
 
-    public VolunteerProfile(VolunteerProfileDto volunteerProfileDto, Volunteer volunteer) {
+    public VolunteerProfile(Volunteer volunteer, VolunteerProfileDto volunteerProfileDto) {
         setVolunteer(volunteer);
         setShortBio(volunteerProfileDto.getShortBio());
         setNumTotalEnrollments(volunteerProfileDto.getNumTotalEnrollments());

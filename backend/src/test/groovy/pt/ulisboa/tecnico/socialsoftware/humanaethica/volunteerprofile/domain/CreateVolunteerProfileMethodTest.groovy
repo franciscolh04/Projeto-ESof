@@ -25,7 +25,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         volunteerProfileDto.setShortBio(shortBio)
 
         when:
-        new VolunteerProfile(volunteerProfileDto, volunteer)
+        new VolunteerProfile(volunteer, volunteerProfileDto)
 
         then:
         def error = thrown(HEException)
@@ -46,7 +46,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         volunteerProfileDto.setShortBio(shortBio)
 
         when:
-        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteerProfileDto, volunteer)
+        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteer, volunteerProfileDto)
 
         then: "no exception should be thrown and the shortBio should be set correctly"
         volunteerProfile.getShortBio() == shortBio
@@ -67,7 +67,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         volunteerProfileDto.setShortBio(VOLUNTEER_PROFILE_SHORT_BIO_VALID)
 
         when:
-        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteerProfileDto, volunteer)
+        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteer, volunteerProfileDto)
 
         then: "no exception should be thrown"
         def error = thrown(HEException)
@@ -92,7 +92,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         volunteerProfileDto.setShortBio(VOLUNTEER_PROFILE_SHORT_BIO_VALID)
 
         when:
-        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteerProfileDto, volunteer)
+        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteer, volunteerProfileDto)
 
         then: "no exception should be thrown"
         volunteerProfile.getSelectedParticipations() == [participation1, participation2, participation3]
