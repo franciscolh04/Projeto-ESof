@@ -39,13 +39,12 @@ public class InstitutionProfile {
 
     public InstitutionProfile(Institution institution, InstitutionProfileDto institutionProfileDto) {
         setInstitution(institution);
-    
+        
         updateInstitutionProfile();
-
-        updateAssementsInstitutionProfile();
-
+    
         setShortDescription(institutionProfileDto.getShortDescription());
-        verifyInstitutionDescription();
+
+        verifyInvariants();
     }
 
     public Integer getId() {
@@ -62,6 +61,7 @@ public class InstitutionProfile {
 
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
+        verifyInvariants();
     }
 
     public Integer getNumMembers() {
@@ -119,14 +119,22 @@ public class InstitutionProfile {
 
     public void setAssessments(List<Assessment> assessments) {
         this.assessments = assessments;
+        updateAssementsInstitutionProfile();
+        setNumAssessments(assessments.size());
+        verifyInvariants();
     }
 
     public void addAssessment(Assessment assessment) {
         this.assessments.add(assessment);
+        assessment.setInstitutionProfile(this);
+        setNumAssessments(assessments.size());
+        verifyInvariants();
     }
 
     public void removeAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
+        setNumAssessments(assessments.size());
+        verifyInvariants();
     }
 
     public void updateAssementsInstitutionProfile() {
@@ -142,10 +150,9 @@ public class InstitutionProfile {
         setNumActivities(institution.getActivities().size());
         setNumAssessments(institution.getAssessments().size());
         updateAssements();
+        updateAssementsInstitutionProfile();
         updateNumVolunteers();
         updateAverageRating();
-
-        //verifyAssessmentInvariants();
     }
 
     public void updateAssements() {
@@ -177,6 +184,11 @@ public class InstitutionProfile {
 
     }
 
+    public void verifyInvariants(){
+        verifyInstitutionDescription();
+        verifyAssessmentSelection();
+    }
+
     public void verifyInstitutionDescription() {
         if (shortDescription == null) {
             throw new HEException(INVALID_SHORT_DESCRIPTION);
@@ -184,5 +196,12 @@ public class InstitutionProfile {
             throw new HEException(INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT,shortDescription.trim().length());
         }
     }
+
+    public void verifyAssessmentSelection() {
+        if (this.numAssessments < institution.getAssessments().size() * 0.5) {
+            throw new HEException(INSTITUTION_SELECTED_ASSESSMENTS);
+        }
+    }
+
 
 }
