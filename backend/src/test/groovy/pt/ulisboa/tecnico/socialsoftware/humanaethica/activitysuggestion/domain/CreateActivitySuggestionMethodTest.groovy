@@ -10,7 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
+import spock.lang.Unroll
 
+import java.time.LocalDateTime
 
 
 @DataJpaTest
@@ -50,7 +52,40 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         result.getApplicationDeadline() == IN_EIGHT_DAYS
         result.getStartingDate() == IN_NINE_DAYS
         result.getEndingDate() == IN_TEN_DAYS
+        and: "invocations"
+        1 * institution.addActivitySuggestion(_)
+        1 * volunteer.addActivitySuggestion(_)
     }
+
+    @Unroll
+    def "create activitySuggestion and violate description minimum length invariant: description=#description"() {
+
+        given:
+        otherActivitySuggestion.getName() >> ACTIVITY_NAME_2
+        volunteer.getActivitySuggestions() >> [otherActivitySuggestion]
+
+        and: "an activity dto"
+        activitySuggestionDto = new ActivitySuggestionDto()
+        activitySuggestionDto.setName(ACTIVITY_NAME_1)
+        activitySuggestionDto.setRegion(ACTIVITY_REGION_1)
+        activitySuggestionDto.setParticipantsNumberLimit(10)
+        activitySuggestionDto.setDescription(description)
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(IN_EIGHT_DAYS))
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(IN_NINE_DAYS))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(IN_TEN_DAYS))
+
+
+        when: "an activity suggestion is created"
+        def result = new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.ACTIVITY_SUGGESTION_DESCRIPTION_TOO_SHORT
+
+        where:
+        description << [null, "", "123456789"]
+    }
+
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
