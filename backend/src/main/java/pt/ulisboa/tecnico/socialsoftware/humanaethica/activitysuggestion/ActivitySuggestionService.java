@@ -38,17 +38,13 @@ public class ActivitySuggestionService {
     public ActivitySuggestionDto createActivitySuggestion(Integer userId, Integer institutionId,
                                                           ActivitySuggestionDto activitySuggestionDto) {
 
-        if (activitySuggestionDto == null)
-            throw new HEException(ACTIVITY_SUGGESTION_INVALID);
-
-        Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
-
-        if (userId == null)
-            throw new HEException(USER_NOT_FOUND);
-
+        if (userId == null) throw new HEException(USER_NOT_FOUND);
         Volunteer volunteer = (Volunteer) userRepository.findById(userId)
                 .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
+
+        if (institutionId == null) throw new HEException(INSTITUTION_NOT_FOUND);
+        Institution institution = institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
 
         ActivitySuggestion activitySuggestion = new ActivitySuggestion(institution, volunteer, activitySuggestionDto);
         activitySuggestionRepository.save(activitySuggestion);

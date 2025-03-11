@@ -4,8 +4,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain.ActivitySuggestion
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
+import spock.lang.Unroll
 
 
 @DataJpaTest
@@ -13,7 +16,6 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
 
     public static final String EXIST = 'exist'
     public static final String NO_EXIST = 'noExist'
-    public static final String SHORTDESCRIPTION = "This is a short description"
 
     def institution
     def volunteer
@@ -57,13 +59,56 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
         storedActivitySuggestion.region == ACTIVITY_REGION_1
         storedActivitySuggestion.participantsNumberLimit == 1
         storedActivitySuggestion.description == ACTIVITY_DESCRIPTION_1
+        storedActivitySuggestion.applicationDeadline == IN_EIGHT_DAYS
         storedActivitySuggestion.startingDate == IN_NINE_DAYS
         storedActivitySuggestion.endingDate == IN_TEN_DAYS
-        storedActivitySuggestion.applicationDeadline == IN_EIGHT_DAYS
         storedActivitySuggestion.institution.id == institution.id
         storedActivitySuggestion.volunteer.id == volunteer.id
     }
 
+    @Unroll
+    def 'invalid arguments: volunteer=#volunteerId, institution=#institutionId'() {
+        given: "an activity suggestion dto"
+        def activitySuggestionDto = createActivitySuggestionDto(ACTIVITY_NAME_1,ACTIVITY_REGION_1,1,ACTIVITY_DESCRIPTION_1,
+                IN_EIGHT_DAYS,IN_NINE_DAYS,IN_TEN_DAYS)
+        when:
+        def result = activitySuggestionService.createActivitySuggestion(
+                getVolunteerId(volunteerId),
+                getInstitutionId(institutionId),
+                activitySuggestionDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == errorMessage
+
+        and: "no activity is stored in the database"
+        activitySuggestionRepository.findAll().size() == 0
+
+        where:
+        volunteerId   | institutionId || errorMessage
+        null          | EXIST         || ErrorMessage.USER_NOT_FOUND
+        NO_EXIST      | EXIST         || ErrorMessage.USER_NOT_FOUND
+        EXIST         | null          || ErrorMessage.INSTITUTION_NOT_FOUND
+        EXIST         | NO_EXIST      || ErrorMessage.INSTITUTION_NOT_FOUND
+    }
+
+    def getInstitutionId(institutionId) {
+        if (institutionId == EXIST)
+            return institution.getId()
+        else if (institutionId == NO_EXIST)
+            return 222
+        else
+            return null
+    }
+
+    def getVolunteerId(volunteerId) {
+        if (volunteerId == EXIST)
+            return volunteer.getId()
+        else if (volunteerId == NO_EXIST)
+            return 222
+        else
+            return null
+    }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
