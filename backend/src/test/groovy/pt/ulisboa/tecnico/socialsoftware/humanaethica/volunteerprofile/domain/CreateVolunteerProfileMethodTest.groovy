@@ -69,7 +69,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         when:
         VolunteerProfile volunteerProfile = new VolunteerProfile(volunteer, volunteerProfileDto)
 
-        then: "no exception should be thrown"
+        then:
         def error = thrown(HEException)
         error.getErrorMessage() == errorMessage
 
@@ -83,7 +83,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
 
     @Unroll
     def "create volunteer profile with selected participations assessed: memberRating1=#memberRating1 | memberRating2=#memberRating2 | memberRating3=#memberRating3"() {
-        given: "a volunteer profile with selected participations"
+        given: "a valid volunteer profile with selected participations assessed"
         VolunteerProfileDto volunteerProfileDto = new VolunteerProfileDto()
         participation1.getMemberRating() >> memberRating1
         participation2.getMemberRating() >> memberRating2
@@ -101,6 +101,33 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         memberRating1  | memberRating2  | memberRating3
         1              | 1              | 1
         3              | 4              | 5
+    }
+
+    @Unroll
+    def "create volunteer profile and violate the minimum selected participations invariant: totalParticipations=#totalParticipations | totalAssessments=#totalAssessments"() {
+        given: "a volunteer profile with an invalid number of selected participations"
+        VolunteerProfileDto volunteerProfileDto = new VolunteerProfileDto()
+        participation1.getMemberRating() >> VALID_PARTICIPATION_MEMBER_RATING
+        participation2.getMemberRating() >> VALID_PARTICIPATION_MEMBER_RATING
+        volunteerProfileDto.setSelectedParticipations([participation1, participation2])
+        volunteerProfileDto.setNumTotalParticipations(totalParticipations)
+        volunteerProfileDto.setNumTotalAssessments(totalAssessments)
+        volunteerProfileDto.setShortBio(VOLUNTEER_PROFILE_SHORT_BIO_VALID)
+
+
+        when:
+        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteer, volunteerProfileDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == errorMessage
+
+
+        where:
+        totalParticipations  | totalAssessments || errorMessage
+        6                    | 7                || ErrorMessage.SELECTED_PARTICIPATIONS_INVALID_NUMBER
+        8                    | 3                || ErrorMessage.SELECTED_PARTICIPATIONS_INVALID_NUMBER
+        6                    | 3                || ErrorMessage.SELECTED_PARTICIPATIONS_INVALID_NUMBER
     }
 
     @Unroll
