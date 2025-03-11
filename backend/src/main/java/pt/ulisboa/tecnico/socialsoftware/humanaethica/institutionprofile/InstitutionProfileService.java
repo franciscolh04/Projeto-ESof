@@ -37,5 +37,18 @@ public class InstitutionProfileService {
 
         return new InstitutionProfileDto(institutionProfile);
     }
+    
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public InstitutionProfileDto getInstitutionProfile(Integer institutionId){
+
+        if (institutionId == null) throw new HEException(INSTITUTION_NOT_FOUND);
+        Institution institution = institutionRepository.findById(institutionId)
+        .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
+
+        InstitutionProfile institutionProfile = institutionProfileRepository.getInstitutionProfileByInstitutionID(institutionId)
+        .orElseThrow(() -> new HEException(INSTITUTION_PROFILE_NOT_FOUND));
+
+        return new InstitutionProfileDto(institutionProfile);
+    }
 
 }
