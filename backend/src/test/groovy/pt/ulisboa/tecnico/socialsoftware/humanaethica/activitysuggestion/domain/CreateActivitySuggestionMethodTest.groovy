@@ -61,7 +61,7 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
     def "create activitySuggestion and violate description minimum length invariant: description=#description"() {
 
         given:
-        otherActivitySuggestion.getName() >> ACTIVITY_NAME_2
+        otherActivitySuggestion.getName() >> ACTIVITY_NAME_1
         volunteer.getActivitySuggestions() >> [otherActivitySuggestion]
 
         and: "an activity dto"
@@ -84,6 +84,34 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
 
         where:
         description << [null, "", "123456789"]
+    }
+
+    @Unroll
+    def "create activitySuggestion and violate duplicated name suggestion by same volunteer invariant: name=#name"() {
+
+        given:
+        otherActivitySuggestion.getName() >> ACTIVITY_NAME_1
+        volunteer.getActivitySuggestions() >> [otherActivitySuggestion]
+
+        and: "an activity suggestion dto is created"
+        activitySuggestionDto = new ActivitySuggestionDto()
+        activitySuggestionDto.setName(name)
+        activitySuggestionDto.setRegion(ACTIVITY_REGION_1)
+        activitySuggestionDto.setParticipantsNumberLimit(10)
+        activitySuggestionDto.setDescription(ACTIVITY_DESCRIPTION_1)
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(IN_EIGHT_DAYS))
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(IN_NINE_DAYS))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(IN_TEN_DAYS))
+
+        when: "a new activity suggestion is created with the same name by the same volunteer"
+        new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.ACTIVITY_SUGGESTION_ALREADY_MADE_BY_VOLUNTEER
+
+        where:
+        name << [ACTIVITY_NAME_1]
     }
 
 
