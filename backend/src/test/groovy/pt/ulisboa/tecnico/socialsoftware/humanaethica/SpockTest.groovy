@@ -228,6 +228,9 @@ class SpockTest extends Specification {
     public static final String ACTIVITY_DESCRIPTION_2 = "activity description 2"
     public static final String ACTIVITY_SUSPENSION_JUSTIFICATION_VALID = "This is a valid justification."
 
+    // volunteer profile
+    public static final String VOLUNTEER_PROFILE_SHORT_BIO_VALID = "Valid short bio."
+
     @Autowired
     ActivityRepository activityRepository
 
