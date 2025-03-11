@@ -12,8 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institu
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User.Role;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,24 +34,22 @@ public class ActivitySuggestionService {
 
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public ActivitySuggestionDto createActivitySuggestion(Integer volunteerId, Integer institutionId, ActivitySuggestionDto dto) {
+    public ActivitySuggestionDto createActivitySuggestion(Integer userId, Integer institutionId,
+                                                          ActivitySuggestionDto activitySuggestionDto) {
 
-        if (dto == null)
+        if (activitySuggestionDto == null)
             throw new HEException(ACTIVITY_SUGGESTION_INVALID);
 
         Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
 
-        User user = userRepository.findById(volunteerId)
-                .orElseThrow(() -> new HEException(VOLUNTEER_NOT_FOUND));
+        if (userId == null)
+            throw new HEException(USER_NOT_FOUND);
 
-        if (!(user.getRole() == Role.VOLUNTEER)) {
-            throw new HEException(VOLUNTEER_NOT_FOUND);
-        }
-        Volunteer volunteer = (Volunteer) user;
+        Volunteer volunteer = (Volunteer) userRepository.findById(userId)
+                .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
 
-
-        ActivitySuggestion activitySuggestion = new ActivitySuggestion(institution, volunteer, dto);
+        ActivitySuggestion activitySuggestion = new ActivitySuggestion(institution, volunteer, activitySuggestionDto);
         activitySuggestionRepository.save(activitySuggestion);
 
         return new ActivitySuggestionDto(activitySuggestion);
