@@ -57,6 +57,31 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
     }
 
     @Unroll
+    def "create volunteer profile and violate selected participations assessed invariant: memberRating1=#memberRating1 | memberRating2=#memberRating2 | memberRating3=#memberRating3"() {
+        given: "a volunteer profile without selected participations not asse"
+        VolunteerProfileDto volunteerProfileDto = new VolunteerProfileDto()
+        participation1.getMemberRating() >> memberRating1
+        participation2.getMemberRating() >> memberRating2
+        participation3.getMemberRating() >> memberRating3
+        volunteerProfileDto.setSelectedParticipations([participation1, participation2, participation3])
+        volunteerProfileDto.setShortBio(VOLUNTEER_PROFILE_SHORT_BIO_VALID)
+
+        when:
+        VolunteerProfile volunteerProfile = new VolunteerProfile(volunteerProfileDto, volunteer)
+
+        then: "no exception should be thrown"
+        def error = thrown(HEException)
+        error.getErrorMessage() == errorMessage
+
+        where:
+        memberRating1  | memberRating2  | memberRating3  || errorMessage
+        null           | 1              | 1              || ErrorMessage.SELECTED_PARTICIPATION_NOT_ASSESSED
+        3              | null           | 5              || ErrorMessage.SELECTED_PARTICIPATION_NOT_ASSESSED
+        1              | 4              | null           || ErrorMessage.SELECTED_PARTICIPATION_NOT_ASSESSED
+        null           | null           | null           || ErrorMessage.SELECTED_PARTICIPATION_NOT_ASSESSED
+    }
+
+    @Unroll
     def "create volunteer profile with selected participations assessed: memberRating1=#memberRating1 | memberRating2=#memberRating2 | memberRating3=#memberRating3"() {
         given: "a volunteer profile with selected participations"
         VolunteerProfileDto volunteerProfileDto = new VolunteerProfileDto()
@@ -73,11 +98,10 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         volunteerProfile.getSelectedParticipations() == [participation1, participation2, participation3]
 
         where:
-        memberRating1  | memberRating2  |  memberRating3
+        memberRating1  | memberRating2  | memberRating3
         1              | 1              | 1
         3              | 4              | 5
     }
-
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
