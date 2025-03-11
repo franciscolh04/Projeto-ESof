@@ -140,4 +140,10 @@ public class VolunteerProfile {
             throw new HEException(SELECTED_PARTICIPATION_NOT_ASSESSED);
         }
     }
+
+    private void minimumSelectedParticipationsConstraint() {
+        if (this.selectedParticipations.size() < Math.min(numTotalParticipations/2, numTotalAssessments)) {
+            throw new HEException(SELECTED_PARTICIPATIONS_INVALID_NUMBER);
+        }
+    }
 }

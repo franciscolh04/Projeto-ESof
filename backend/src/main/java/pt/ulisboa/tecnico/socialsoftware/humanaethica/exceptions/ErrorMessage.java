@@ -70,6 +70,7 @@ public enum ErrorMessage {
     // VolunteerProfile
     SHORT_BIO_TOO_SHORT("Short bio must be at least 10 characters"),
     SELECTED_PARTICIPATION_NOT_ASSESSED("All selected participations must be assessed."),
+    SELECTED_PARTICIPATIONS_INVALID_NUMBER("The number of selected participations must be at least the smaller value between half of the total participations and the total assessed participations."),
     ;
 
     public final String label;
