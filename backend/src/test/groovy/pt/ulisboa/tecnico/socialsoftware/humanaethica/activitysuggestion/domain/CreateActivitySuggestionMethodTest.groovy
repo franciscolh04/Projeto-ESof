@@ -114,6 +114,33 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         name << [ACTIVITY_NAME_1]
     }
 
+    @Unroll
+    def "create activitySuggestion and violate minimum application deadline invariant: deadline=#deadline"() {
+
+        given:
+        volunteer.getActivitySuggestions() >> []
+
+        and: "a new activity suggestion dto is created"
+        activitySuggestionDto = new ActivitySuggestionDto()
+        activitySuggestionDto.setName(ACTIVITY_NAME_1)
+        activitySuggestionDto.setRegion(ACTIVITY_REGION_1)
+        activitySuggestionDto.setParticipantsNumberLimit(10)
+        activitySuggestionDto.setDescription(ACTIVITY_DESCRIPTION_1)
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(deadline))
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(IN_NINE_DAYS))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(IN_TEN_DAYS))
+
+        when:
+        new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.ACTIVITY_SUGGESTION_DEADLINE_TOO_SOON
+
+        where:
+        deadline << [TWO_DAYS_AGO, NOW, IN_SIX_DAYS]
+    }
+
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
