@@ -2,18 +2,19 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain.ActivitySuggestion;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.domain.ActivitySuggestion.State;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
-import java.time.LocalDateTime;
+//import java.time.String;
 
 public class ActivitySuggestionDto {
     private Integer id;
     private String name;
     private String description;
     private String region;
-    private LocalDateTime creationDate;
-    private LocalDateTime applicationDeadline;
-    private LocalDateTime startingDate;
-    private LocalDateTime endingDate;
+    private String creationDate;
+    private String applicationDeadline;
+    private String startingDate;
+    private String endingDate;
     private Integer participantsNumberLimit;
     private State state;
     private Integer institutionId;
@@ -26,10 +27,10 @@ public class ActivitySuggestionDto {
         this.name = activitySuggestion.getName();
         this.description = activitySuggestion.getDescription();
         this.region = activitySuggestion.getRegion();
-        this.creationDate = activitySuggestion.getCreationDate();
-        this.applicationDeadline = activitySuggestion.getApplicationDeadline();
-        this.startingDate = activitySuggestion.getStartingDate();
-        this.endingDate = activitySuggestion.getEndingDate();
+        this.creationDate = DateHandler.toISOString(activitySuggestion.getCreationDate());
+        this.startingDate = DateHandler.toISOString(activitySuggestion.getStartingDate());
+        this.endingDate = DateHandler.toISOString(activitySuggestion.getEndingDate());
+        this.applicationDeadline = DateHandler.toISOString(activitySuggestion.getApplicationDeadline());
         this.participantsNumberLimit = activitySuggestion.getParticipantsNumberLimit();
         this.state = activitySuggestion.getState();
         this.institutionId = activitySuggestion.getInstitution().getId();
@@ -70,35 +71,35 @@ public class ActivitySuggestionDto {
         this.region = region;
     }
 
-    public LocalDateTime getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getApplicationDeadline() {
+    public String getApplicationDeadline() {
         return applicationDeadline;
     }
 
-    public void setApplicationDeadline(LocalDateTime applicationDeadline) {
+    public void setApplicationDeadline(String applicationDeadline) {
         this.applicationDeadline = applicationDeadline;
     }
 
-    public LocalDateTime getStartingDate() {
+    public String getStartingDate() {
         return startingDate;
     }
 
-    public void setStartingDate(LocalDateTime startingDate) {
+    public void setStartingDate(String startingDate) {
         this.startingDate = startingDate;
     }
 
-    public LocalDateTime getEndingDate() {
+    public String getEndingDate() {
         return endingDate;
     }
 
-    public void setEndingDate(LocalDateTime endingDate) {
+    public void setEndingDate(String endingDate) {
         this.endingDate = endingDate;
     }
 

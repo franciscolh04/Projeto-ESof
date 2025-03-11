@@ -5,49 +5,51 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
-import spock.lang.Unroll
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 
-import java.time.LocalDateTime
+
 
 @DataJpaTest
 class CreateActivitySuggestionMethodTest extends SpockTest {
     Institution institution = Mock()
     Volunteer volunteer = Mock()
+    ActivitySuggestion otherActivitySuggestion = Mock()
     def activitySuggestionDto
 
     def setup() {
-        given: "dados da sugestão de atividade"
+        given: "activitySuggestion info"
         activitySuggestionDto = new ActivitySuggestionDto()
-        activitySuggestionDto.name = "Campanha de Doação"
-        activitySuggestionDto.region = "Lisboa"
+        activitySuggestionDto.name = ACTIVITY_NAME_1
+        activitySuggestionDto.region = ACTIVITY_REGION_1
         activitySuggestionDto.participantsNumberLimit = 10
-        activitySuggestionDto.description = "Uma campanha para arrecadar alimentos."
-        activitySuggestionDto.applicationDeadline = LocalDateTime.now().plusDays(10)
-        activitySuggestionDto.startingDate = LocalDateTime.now().plusDays(15)
-        activitySuggestionDto.endingDate = LocalDateTime.now().plusDays(20)
+        activitySuggestionDto.description = ACTIVITY_DESCRIPTION_1
+        activitySuggestionDto.applicationDeadline = DateHandler.toISOString(IN_EIGHT_DAYS)
+        activitySuggestionDto.startingDate = DateHandler.toISOString(IN_NINE_DAYS)
+        activitySuggestionDto.endingDate = DateHandler.toISOString(IN_TEN_DAYS)
     }
 
-    def "criar sugestão de atividade corretamente"() {
-        given: "um voluntário e uma instituição"
-        institution.getId() >> 1
-        volunteer.getId() >> 1
-        volunteer.getActivitySuggestions() >> new ArrayList<>()
+    def "creat an activity suggestion sucessfully"() {
+        given:
+        otherActivitySuggestion.getName() >> ACTIVITY_NAME_2
+        volunteer.getActivitySuggestions() >> [otherActivitySuggestion]
 
-        when: "uma sugestão de atividade é criada"
+        when: "an activity suggestion is created"
         def result = new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
 
-        then: "verifica os valores atribuídos"
+        then: "check result"
         result.getInstitution() == institution
         result.getVolunteer() == volunteer
-        result.getName() == "Campanha de Doação"
-        result.getRegion() == "Lisboa"
+        result.getName() == ACTIVITY_NAME_1
+        result.getRegion() == ACTIVITY_REGION_1
         result.getParticipantsNumberLimit() == 10
-        result.getDescription() == "Uma campanha para arrecadar alimentos."
-        result.getApplicationDeadline() == activitySuggestionDto.applicationDeadline
-        result.getStartingDate() == activitySuggestionDto.startingDate
-        result.getEndingDate() == activitySuggestionDto.endingDate
+        result.getDescription() == ACTIVITY_DESCRIPTION_1
+        result.getApplicationDeadline() == IN_EIGHT_DAYS
+        result.getStartingDate() == IN_NINE_DAYS
+        result.getEndingDate() == IN_TEN_DAYS
     }
 
     @TestConfiguration

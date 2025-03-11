@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -50,9 +51,9 @@ public class ActivitySuggestion {
         setName(activitySuggestionDto.getName());
         setDescription(activitySuggestionDto.getDescription());
         setRegion(activitySuggestionDto.getRegion());
-        setApplicationDeadline(activitySuggestionDto.getApplicationDeadline());
-        setStartingDate(activitySuggestionDto.getStartingDate());
-        setEndingDate(activitySuggestionDto.getEndingDate());
+        setApplicationDeadline(DateHandler.toLocalDateTime(activitySuggestionDto.getApplicationDeadline()));
+        setStartingDate(DateHandler.toLocalDateTime(activitySuggestionDto.getStartingDate()));
+        setEndingDate(DateHandler.toLocalDateTime(activitySuggestionDto.getEndingDate()));
         setParticipantsNumberLimit(activitySuggestionDto.getParticipantsNumberLimit());
 
         this.creationDate = LocalDateTime.now();
