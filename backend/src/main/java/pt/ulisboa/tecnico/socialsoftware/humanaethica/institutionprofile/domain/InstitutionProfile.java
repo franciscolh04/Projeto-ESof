@@ -219,18 +219,16 @@ public class InstitutionProfile {
         if (this.assessments.isEmpty() || this.institution == null || this.institution.getAssessments().isEmpty()) {
             return;
         }
+        
+        int minRecentAssessments = (int) Math.ceil(getAssessments().size() * 0.2);
     
-        List<Assessment> institutionAssessments = this.institution.getAssessments();
-    
-        int minRecentAssessments = (int) Math.ceil(institutionAssessments.size() * 0.2);
-    
-        List<Assessment> recentInstitutionAssessments = institutionAssessments.stream()
+        List<Assessment> mostRecentInstitutionAssessments = getInstitution().getAssessments().stream()
                 .sorted((a1, a2) -> a2.getReviewDate().compareTo(a1.getReviewDate()))
                 .limit(minRecentAssessments)
                 .toList();
     
         long recentAssessmentsInList = this.assessments.stream()
-                .filter(recentInstitutionAssessments::contains)
+                .filter(mostRecentInstitutionAssessments::contains)
                 .count();
     
         if (recentAssessmentsInList < minRecentAssessments) {
