@@ -21,4 +21,11 @@ public class InstitutionProfileController {
         // Principal is not used because hasPermission(#institutionId, 'INSTITUTION.MEMBER') deals with the restriction
         return institutionProfileService.createInstitutionProfile(institutionId, institutionProfileDto);
     }
+
+    @GetMapping("/{institutionId}/profile")
+    public InstitutionProfileDto getInstitutionProfile(@PathVariable Integer institutionId) {
+        return institutionProfileService.getInstitutionProfile(institutionId);
+    }
 }
+
+
