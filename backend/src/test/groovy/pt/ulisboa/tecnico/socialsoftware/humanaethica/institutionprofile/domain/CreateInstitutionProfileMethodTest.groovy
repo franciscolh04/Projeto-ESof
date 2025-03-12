@@ -23,6 +23,8 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
     Assessment assessment = Mock()
     Assessment assessment1 = Mock()
     Assessment assessment2 = Mock()
+    Assessment assessment3 = Mock()
+    Assessment assessment4 = Mock()
     Activity activity = Mock()
     Activity otherActivity = Mock()
     Participation participation = Mock()
@@ -32,7 +34,7 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
     def setup() {
         given: "institution profile info"
         institutionProfileDto = new InstitutionProfileDto()
-        institutionProfileDto.shortDescription = "short description"
+        institutionProfileDto.shortDescription = SHORTDESCRIPTION
     }
 
     def "create institution profile"() {
@@ -54,7 +56,7 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
         def result = new InstitutionProfile(institution, institutionProfileDto)
 
         then: "checks results"
-        result.shortDescription == "short description"
+        result.shortDescription == SHORTDESCRIPTION
         result.numMembers == 1
         result.numActivities == 2
         result.numAssessments == 1
@@ -146,6 +148,34 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
         then:
         def error = thrown(HEException)
         error.getErrorMessage() == ErrorMessage.INSTITUTION_SELECTED_ASSESSMENTS
+    }
+
+    def "create institution profile and violate most recent 20% selected activities"() {
+        given:
+        assessment.getReviewDate() >> THREE_DAYS_AGO
+        assessment1.getReviewDate() >> TWO_DAYS_AGO
+        assessment2.getReviewDate() >> ONE_DAY_AGO
+        assessment3.getReviewDate() >> NOW
+        assessment4.getReviewDate() >> IN_ONE_DAY
+
+        participation.getVolunteerRating() >> 5
+
+        activity.getNumberOfParticipatingVolunteers() >> 3
+        activity.getParticipations() >> [participation]
+
+        institution.getActivities() >> [activity]
+        institution.getMembers() >> [member]
+        institution.getAssessments() >> [assessment, assessment1, assessment2, assessment3, assessment4]
+
+        when:
+        def result = new InstitutionProfile(institution, institutionProfileDto)
+        result.removeAssessment(assessment4)
+        result.removeAssessment(assessment3)
+        result.removeAssessment(assessment2)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.INSTITUTION_MOST_RECENT_ASSESSMENTS
     }
 
     @TestConfiguration
