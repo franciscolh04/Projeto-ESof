@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Parti
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VolunteerProfileDto {
     private Integer id;
@@ -14,7 +15,7 @@ public class VolunteerProfileDto {
     private Integer numTotalParticipations;
     private Integer numTotalAssessments;
     private Double averageRating;
-    private List<Participation> selectedParticipations = new ArrayList<>();
+    private List<Integer> selectedParticipationsIds;
 
     public VolunteerProfileDto() {
     }
@@ -26,7 +27,9 @@ public class VolunteerProfileDto {
         setNumTotalParticipations(volunteerProfile.getNumTotalParticipations());
         setNumTotalAssessments(volunteerProfile.getNumTotalAssessments());
         setAverageRating(volunteerProfile.getAverageRating());
-        setSelectedParticipations(volunteerProfile.getSelectedParticipations());
+        setSelectedParticipationsIds(volunteerProfile.getSelectedParticipations().stream()
+                .map(participation -> participation.getId())
+                .collect(Collectors.toList()));
     }
 
     public void setId(Integer id) {
@@ -77,12 +80,12 @@ public class VolunteerProfileDto {
         return averageRating;
     }
 
-    public List<Participation> getSelectedParticipations() {
-        return selectedParticipations;
+    public List<Integer> getSelectedParticipationsIds() {
+        return selectedParticipationsIds;
     }
 
-    public void setSelectedParticipations(List<Participation> selectedParticipations) {
-        this.selectedParticipations = selectedParticipations;
+    public void setSelectedParticipationsIds(List<Integer> selectedParticipationsIds) {
+        this.selectedParticipationsIds = selectedParticipationsIds;
     }
 
     @Override

@@ -232,7 +232,7 @@ class SpockTest extends Specification {
     public static final String VOLUNTEER_PROFILE_SHORT_BIO_VALID = "Valid short bio."
 
     // participation
-    public static final Integer VALID_PARTICIPATION_MEMBER_RATING = 3
+    public static final String VALID_VOLUNTEER_REVIEW = "Valid volunteer review."
 
     @Autowired
     ActivityRepository activityRepository

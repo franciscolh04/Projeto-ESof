@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
@@ -49,7 +50,7 @@ public class VolunteerProfile {
         setNumTotalParticipations(volunteerProfileDto.getNumTotalParticipations());
         setNumTotalAssessments(volunteerProfileDto.getNumTotalAssessments());
         setAverageRating(volunteerProfileDto.getAverageRating());
-        setSelectedParticipations(volunteerProfileDto.getSelectedParticipations());
+        setSelectedParticipations(volunteerProfileDto.getSelectedParticipationsIds());
 
         verifyInvariants();
     }
@@ -103,6 +104,7 @@ public class VolunteerProfile {
         return selectedParticipations;
     }
 
+    
     public void addSelectedParticipation(Participation participation) {
         this.selectedParticipations.add(participation);
     }
@@ -111,8 +113,16 @@ public class VolunteerProfile {
         this.selectedParticipations.remove(participation);
     }
 
-    public void setSelectedParticipations(List<Participation> selectedParticipations) {
-        this.selectedParticipations = selectedParticipations;
+    public void setSelectedParticipations(List<Integer> selectedParticipationsIds) {
+        if (selectedParticipationsIds == null || selectedParticipationsIds.isEmpty()) {
+            this.selectedParticipations = new ArrayList<>();
+            return;
+        }
+
+        List<Participation> allParticipations = this.volunteer.getParticipations();
+        this.selectedParticipations = allParticipations.stream()
+                .filter(participation -> selectedParticipationsIds.contains(participation.getId()))
+                .collect(Collectors.toList());
     }
 
     public Volunteer getVolunteer() {
@@ -137,7 +147,7 @@ public class VolunteerProfile {
 
     private void selectedParticipationsAreAssessed() {
         if (this.selectedParticipations.stream()
-                .anyMatch(participation -> participation.getMemberRating() == null)) {
+                .anyMatch(participation -> participation.getMemberReview() == null)) {
             throw new HEException(SELECTED_PARTICIPATION_NOT_ASSESSED);
         }
     }
