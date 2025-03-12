@@ -39,6 +39,8 @@ public class InstitutionProfile {
 
     public InstitutionProfile(Institution institution, InstitutionProfileDto institutionProfileDto) {
         setInstitution(institution);
+
+        updateAssementsInstitutionProfile();
         
         updateInstitutionProfile();
     
@@ -150,7 +152,6 @@ public class InstitutionProfile {
         setNumActivities(institution.getActivities().size());
         setNumAssessments(institution.getAssessments().size());
         updateAssements();
-        updateAssementsInstitutionProfile();
         updateNumVolunteers();
         updateAverageRating();
     }

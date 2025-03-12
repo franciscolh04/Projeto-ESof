@@ -19,4 +19,11 @@ public class InstitutionProfileController {
     public InstitutionProfileDto createInstitutionProfile(@PathVariable Integer institutionId, @Valid @RequestBody InstitutionProfileDto institutionProfileDto) {
         return institutionProfileService.createInstitutionProfile(institutionId, institutionProfileDto);
     }
+
+    @GetMapping("/{institutionId}/profile")
+    public InstitutionProfileDto getInstitutionProfile(@PathVariable Integer institutionId) {
+        return institutionProfileService.getInstitutionProfile(institutionId);
+    }
 }
+
+
