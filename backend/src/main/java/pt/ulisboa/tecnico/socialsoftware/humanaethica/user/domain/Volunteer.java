@@ -96,4 +96,12 @@ public class Volunteer extends User {
     public List<Report> getReports() {
         return reports;
     }
+
+    public VolunteerProfile getProfile() {
+        return volunteerProfile;
+    }
+
+    public void setProfile(VolunteerProfile volunteerProfile) {
+        this.volunteerProfile = volunteerProfile;
+    }
 }

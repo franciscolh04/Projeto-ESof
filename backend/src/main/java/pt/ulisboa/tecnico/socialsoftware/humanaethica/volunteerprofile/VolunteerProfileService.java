@@ -25,6 +25,8 @@ public class VolunteerProfileService {
         if (userId == null) throw new HEException(USER_NOT_FOUND);
         Volunteer volunteer = (Volunteer) userRepository.findById(userId).orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
 
+        if (volunteer.getProfile() != null) throw new HEException(VOLUNTEER_PROFILE_ALREADY_EXISTS);
+
         VolunteerProfile volunteerProfile = new VolunteerProfile(volunteer, volunteerProfileDto);
 
         volunteerProfileRepository.save(volunteerProfile);
