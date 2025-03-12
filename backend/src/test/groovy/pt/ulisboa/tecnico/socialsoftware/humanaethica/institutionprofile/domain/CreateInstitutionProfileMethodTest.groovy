@@ -21,6 +21,8 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
     Institution institution = Mock()
     Member member = Mock()
     Assessment assessment = Mock()
+    Assessment assessment1 = Mock()
+    Assessment assessment2 = Mock()
     Activity activity = Mock()
     Activity otherActivity = Mock()
     Participation participation = Mock()
@@ -66,6 +68,7 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
         1 * assessment.setInstitutionProfile(_)
     }
 
+    @Unroll
     def "create institution profile and violate short description : description=#description"() {
 
         given:
@@ -93,6 +96,56 @@ class CreateInstitutionProfileMethodTest extends SpockTest {
         "  "              || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
         "   1111111 1   " || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
         "  12345,  8"     || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
+    }
+
+    def "create institution profile and violate 50% of selected assessments invariant with 1 element"() {
+
+        given:
+        participation.getVolunteerRating() >> 5
+
+        activity.getNumberOfParticipatingVolunteers() >> 3
+        activity.getParticipations() >> [participation]
+
+        institution.getActivities() >> [activity]
+        institution.getMembers() >> [member]
+        assessment1.getReviewDate() >> TWO_DAYS_AGO
+        institution.getAssessments() >> [assessment1]
+        and:
+        institutionProfileDto.shortDescription = SHORTDESCRIPTION
+
+        when:
+        def result = new InstitutionProfile(institution, institutionProfileDto)
+        result.setAssessments([])
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.INSTITUTION_SELECTED_ASSESSMENTS
+    }
+
+    def "create institution profile and violate 50% of selected assessments invariant with more than 1 element"() {
+
+        given:
+        participation.getVolunteerRating() >> 5
+
+        activity.getNumberOfParticipatingVolunteers() >> 3
+        activity.getParticipations() >> [participation]
+
+        institution.getActivities() >> [activity]
+        institution.getMembers() >> [member]
+        assessment1.getReviewDate() >> TWO_DAYS_AGO
+        assessment.getReviewDate() >> ONE_DAY_AGO
+        assessment2.getReviewDate() >> THREE_DAYS_AGO
+        institution.getAssessments() >> [assessment1,assessment,assessment2]
+        and:
+        institutionProfileDto.shortDescription = SHORTDESCRIPTION
+
+        when:
+        def result = new InstitutionProfile(institution, institutionProfileDto)
+        result.setAssessments([assessment])
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.INSTITUTION_SELECTED_ASSESSMENTS
     }
 
     @TestConfiguration

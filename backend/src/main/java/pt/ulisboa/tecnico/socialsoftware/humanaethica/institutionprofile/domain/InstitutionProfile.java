@@ -12,6 +12,8 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.Optional;
 
 @Entity
 @Table(name = "institution_profile")
@@ -40,9 +42,13 @@ public class InstitutionProfile {
     public InstitutionProfile(Institution institution, InstitutionProfileDto institutionProfileDto) {
         setInstitution(institution);
 
-        updateAssementsInstitutionProfile();
-        
         updateInstitutionProfile();
+
+        updateAssementsInstitutionProfile();
+
+        if(institution.getActivities() != null){
+            updateAverageRating();
+        }
     
         setShortDescription(institutionProfileDto.getShortDescription());
 
@@ -148,13 +154,13 @@ public class InstitutionProfile {
     }
 
     public void updateInstitutionProfile() {
-        setNumMembers(institution.getMembers().size());
-        setNumActivities(institution.getActivities().size());
-        setNumAssessments(institution.getAssessments().size());
-        updateAssements();
-        updateNumVolunteers();
-        updateAverageRating();
+        setNumMembers(institution.getMembers() != null ? institution.getMembers().size() : 0);
+        setNumActivities(institution.getActivities() != null ? institution.getActivities().size() : 0);
+        setNumAssessments(institution.getAssessments() != null ? institution.getAssessments().size() : 0);
+        if(institution.getAssessments() != null){updateAssements();}
+        if(institution.getActivities() != null){updateAverageRating();}
     }
+
 
     public void updateAssements() {
 
@@ -172,18 +178,19 @@ public class InstitutionProfile {
     }
 
     public void updateAverageRating() {
-
-        // IMPORTANT: updateNumVolunteers() must be called before this method
-
-        averageRating = institution.getActivities()
-        .stream()
-        .flatMap(activity -> activity.getParticipations().stream()) 
-        .mapToDouble(Participation::getVolunteerRating)
-        .sum(); 
-
-        averageRating = averageRating / numVolunteers;
-
+        updateNumVolunteers();
+    
+        double totalRating = institution.getActivities()
+            .stream()
+            .flatMap(activity -> Optional.ofNullable(activity.getParticipations())
+                                         .orElse(Collections.emptyList())
+                                         .stream()) 
+            .mapToDouble(Participation::getVolunteerRating)
+            .sum();
+    
+        averageRating = numVolunteers > 0 ? totalRating / numVolunteers : 0.0;
     }
+    
 
     public void verifyInvariants(){
         verifyInstitutionDescription();
@@ -200,6 +207,9 @@ public class InstitutionProfile {
     }
 
     public void verifyAssessmentSelection() {
+        if (institution.getAssessments() == null){
+            return;
+        }
         if (this.numAssessments < institution.getAssessments().size() * 0.5) {
             throw new HEException(INSTITUTION_SELECTED_ASSESSMENTS);
         }
