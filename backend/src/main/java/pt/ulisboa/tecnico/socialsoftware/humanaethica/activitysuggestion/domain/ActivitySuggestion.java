@@ -166,7 +166,7 @@ public class ActivitySuggestion {
     }
 
     private void descriptionHasMinimumLength() {
-        if (this.description == null || description.length() < 10) {
+        if (this.description == null || description.trim().length() < 10) {
             throw new HEException(ACTIVITY_SUGGESTION_DESCRIPTION_TOO_SHORT);
         }
     }
