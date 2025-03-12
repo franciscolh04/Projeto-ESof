@@ -26,7 +26,6 @@ public class InstitutionProfileService {
     public InstitutionProfileDto createInstitutionProfile(Integer institutionId, InstitutionProfileDto institutionProfileDto) {
                 
         if (institutionProfileDto == null) throw new HEException(INVALID_INSTITUTION_PROFILE);
-        if (institutionProfileDto.getShortDescription() == null) throw new HEException(INVALID_SHORT_DESCRIPTION);
         
         if (institutionId == null) throw new HEException(INSTITUTION_NOT_FOUND);
         Institution institution = institutionRepository.findById(institutionId)

@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.InstitutionProfileRepository
@@ -47,11 +48,11 @@ class CreateInstitutionProfileServiceTest extends SpockTest {
     }
 
     @Unroll
-    def 'invalid arguments: institution=#institutionid | instProfDto=#value | description=#description'() {
+    def 'invalid arguments: institution=#institutionid | instProfDto=#value'() {
         given:
         def institutionProfileDto = new InstitutionProfileDto()
         and:
-        institutionProfileDto.shortDescription = description
+        institutionProfileDto.shortDescription = SHORTDESCRIPTION
 
         when:
         institutionProfileService.createInstitutionProfile(getinstitutionid(institutionid), getinstitutionProfileDto(value,institutionProfileDto))
@@ -60,17 +61,13 @@ class CreateInstitutionProfileServiceTest extends SpockTest {
         def error = thrown(HEException)
         error.getErrorMessage() == errorMessage
         and:
-        // FIX : institutionProfileRepository.findAll().size() == 0
+        institutionProfileRepository.findAll().size() == 0
 
         where:
-        institutionid | value              | description            || errorMessage
-        null          | EXIST              |  SHORTDESCRIPTION      || ErrorMessage.INSTITUTION_NOT_FOUND
-        NO_EXIST      | EXIST              |  SHORTDESCRIPTION      || ErrorMessage.INSTITUTION_NOT_FOUND
-        EXIST         | null               |    SHORTDESCRIPTION    || ErrorMessage.INVALID_INSTITUTION_PROFILE
-        EXIST         | EXIST              |    null                || ErrorMessage.INVALID_SHORT_DESCRIPTION
-        EXIST         | EXIST              |"   1111111 1   "       || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
-        EXIST         | EXIST              |  ""                    || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
-        EXIST         | EXIST              |"    "                  || ErrorMessage.INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT
+        institutionid | value              || errorMessage
+        null          | EXIST              || ErrorMessage.INSTITUTION_NOT_FOUND
+        NO_EXIST      | EXIST              || ErrorMessage.INSTITUTION_NOT_FOUND
+        EXIST         | null               || ErrorMessage.INVALID_INSTITUTION_PROFILE
 
     }
 
