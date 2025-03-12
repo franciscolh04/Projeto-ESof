@@ -4,8 +4,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institu
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
-import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
+import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class ActivitySuggestion {
     public enum State {IN_REVIEW, APPROVED, REJECTED}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -32,7 +32,7 @@ public class ActivitySuggestion {
     private Integer participantsNumberLimit;
 
     @Enumerated(EnumType.STRING)
-    private State state;
+    private ActivitySuggestion.State state = ActivitySuggestion.State.IN_REVIEW;
 
     @ManyToOne
     @JoinColumn(name = "institution", nullable = false)
@@ -57,7 +57,6 @@ public class ActivitySuggestion {
         setParticipantsNumberLimit(activitySuggestionDto.getParticipantsNumberLimit());
 
         this.creationDate = LocalDateTime.now();
-        this.state = State.IN_REVIEW;
 
         verifyInvariants();
     }
@@ -66,10 +65,6 @@ public class ActivitySuggestion {
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {

@@ -23,18 +23,18 @@ public class ActivitySuggestionDto {
     public ActivitySuggestionDto() {}
 
     public ActivitySuggestionDto(ActivitySuggestion activitySuggestion) {
-        this.id = activitySuggestion.getId();
-        this.name = activitySuggestion.getName();
-        this.description = activitySuggestion.getDescription();
-        this.region = activitySuggestion.getRegion();
-        this.creationDate = DateHandler.toISOString(activitySuggestion.getCreationDate());
-        this.startingDate = DateHandler.toISOString(activitySuggestion.getStartingDate());
-        this.endingDate = DateHandler.toISOString(activitySuggestion.getEndingDate());
-        this.applicationDeadline = DateHandler.toISOString(activitySuggestion.getApplicationDeadline());
-        this.participantsNumberLimit = activitySuggestion.getParticipantsNumberLimit();
-        this.state = activitySuggestion.getState().name();
-        this.institutionId = activitySuggestion.getInstitution().getId();
-        this.volunteerId = activitySuggestion.getVolunteer().getId();
+        setId(activitySuggestion.getId());
+        setName(activitySuggestion.getName());
+        setDescription(activitySuggestion.getDescription());
+        setRegion(activitySuggestion.getRegion());
+        setCreationDate(DateHandler.toISOString(activitySuggestion.getCreationDate()));
+        setStartingDate(DateHandler.toISOString(activitySuggestion.getStartingDate()));
+        setEndingDate(DateHandler.toISOString(activitySuggestion.getEndingDate()));
+        setApplicationDeadline(DateHandler.toISOString(activitySuggestion.getApplicationDeadline()));
+        setParticipantsNumberLimit(activitySuggestion.getParticipantsNumberLimit());
+        setState(activitySuggestion.getState().name());
+        setInstitutionId(activitySuggestion.getInstitution().getId());
+        setVolunteerId(activitySuggestion.getVolunteer().getId());
     }
 
     // Getters e Setters

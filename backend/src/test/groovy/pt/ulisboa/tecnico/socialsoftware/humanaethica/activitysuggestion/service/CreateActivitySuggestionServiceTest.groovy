@@ -19,17 +19,18 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
 
     def institution
     def volunteer
+    def activitySuggestionDto
 
 
     def setup() {
         institution = institutionService.getDemoInstitution()
         volunteer = authUserService.loginDemoVolunteerAuth().getUser()
+        given: "an activity suggestion dto"
+        activitySuggestionDto = createActivitySuggestionDto(ACTIVITY_NAME_1,ACTIVITY_REGION_1,10,ACTIVITY_DESCRIPTION_1,
+                IN_EIGHT_DAYS,IN_NINE_DAYS,IN_TEN_DAYS)
     }
 
-    def "create activity suggestion"() {
-        given: "an activity suggestion dto"
-        def activitySuggestionDto = createActivitySuggestionDto(ACTIVITY_NAME_1,ACTIVITY_REGION_1,1,ACTIVITY_DESCRIPTION_1,
-                IN_EIGHT_DAYS,IN_NINE_DAYS,IN_TEN_DAYS)
+    def "create activity suggestion successfully"() {
 
         when:
         def result = activitySuggestionService.createActivitySuggestion(
@@ -38,26 +39,26 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
                 activitySuggestionDto)
 
         then: "the returned data is correct"
-        result.name == ACTIVITY_NAME_1
-        result.region == ACTIVITY_REGION_1
-        result.participantsNumberLimit == 1
-        result.description == ACTIVITY_DESCRIPTION_1
-        result.applicationDeadline == DateHandler.toISOString(IN_EIGHT_DAYS)
-        result.startingDate == DateHandler.toISOString(IN_NINE_DAYS)
-        result.endingDate == DateHandler.toISOString(IN_TEN_DAYS)
-        result.institutionId == institution.id
-        result.volunteerId == volunteer.id
+        result.getName() == ACTIVITY_NAME_1
+        result.getRegion() == ACTIVITY_REGION_1
+        result.getParticipantsNumberLimit() == 10
+        result.getDescription() == ACTIVITY_DESCRIPTION_1
+        result.getApplicationDeadline() == DateHandler.toISOString(IN_EIGHT_DAYS)
+        result.getStartingDate() == DateHandler.toISOString(IN_NINE_DAYS)
+        result.getEndingDate() == DateHandler.toISOString(IN_TEN_DAYS)
+        result.getInstitutionId() == institution.id
+        result.getVolunteerId() == volunteer.id
         result.getState() == ActivitySuggestion.State.IN_REVIEW.name()
 
         and: "the activity is saved in the database"
         activitySuggestionRepository.findAll().size() == 1
 
         and: "the stored data is correct"
-
         def storedActivitySuggestion = activitySuggestionRepository.findById(result.id).get()
+        storedActivitySuggestion.id != null
         storedActivitySuggestion.name == ACTIVITY_NAME_1
         storedActivitySuggestion.region == ACTIVITY_REGION_1
-        storedActivitySuggestion.participantsNumberLimit == 1
+        storedActivitySuggestion.participantsNumberLimit == 10
         storedActivitySuggestion.description == ACTIVITY_DESCRIPTION_1
         storedActivitySuggestion.applicationDeadline == IN_EIGHT_DAYS
         storedActivitySuggestion.startingDate == IN_NINE_DAYS
@@ -68,11 +69,9 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
 
     @Unroll
     def 'invalid arguments: volunteer=#volunteerId, institution=#institutionId'() {
-        given: "an activity suggestion dto"
-        def activitySuggestionDto = createActivitySuggestionDto(ACTIVITY_NAME_1,ACTIVITY_REGION_1,1,ACTIVITY_DESCRIPTION_1,
-                IN_EIGHT_DAYS,IN_NINE_DAYS,IN_TEN_DAYS)
+
         when:
-        def result = activitySuggestionService.createActivitySuggestion(
+        activitySuggestionService.createActivitySuggestion(
                 getVolunteerId(volunteerId),
                 getInstitutionId(institutionId),
                 activitySuggestionDto)

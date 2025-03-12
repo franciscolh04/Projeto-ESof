@@ -40,10 +40,12 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         result.getDescription() == ACTIVITY_DESCRIPTION_1
         result.getRegion() == ACTIVITY_REGION_1
         result.getApplicationDeadline() == IN_EIGHT_DAYS
+        result.getCreationDate() != null
         result.getStartingDate() == IN_NINE_DAYS
         result.getEndingDate() == IN_TEN_DAYS
         result.getParticipantsNumberLimit() == 10
         result.getState() == State.IN_REVIEW
+
         and: "invocations"
         1 * institution.addActivitySuggestion(_)
         1 * volunteer.addActivitySuggestion(_)
