@@ -61,4 +61,72 @@ class CreateInstitutionProfileWebServiceIT extends SpockTest {
         cleanup:
         deleteAll()
     }
+
+    def 'member create participation with error'() {
+        given:
+        demoMemberLogin()
+
+        when:
+        def response = webClient.post()
+                .uri('/institutionProfile/' + 222 + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(institutionProfileDto)
+                .retrieve()
+                .bodyToMono(InstitutionProfileDto.class)
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+        institutionProfileRepository.count() == 0
+
+        cleanup:
+        deleteAll()
+    }
+
+    def 'admin cannot create participation'() {
+        given:
+        demoAdminLogin()
+
+        when:
+        def response = webClient.post()
+                .uri('/institutionProfile/' + institution.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(institutionProfileDto)
+                .retrieve()
+                .bodyToMono(InstitutionProfileDto.class)
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+        participationRepository.count() == 0
+
+        cleanup:
+        deleteAll()
+    }
+
+    def 'volunteer cannot create participation'() {
+        given:
+        demoVolunteerLogin()
+
+        when:
+        def response = webClient.post()
+                .uri('/institutionProfile/' + institution.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(institutionProfileDto)
+                .retrieve()
+                .bodyToMono(InstitutionProfileDto.class)
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+        participationRepository.count() == 0
+
+        cleanup:
+        deleteAll()
+    }
+
+
 }
