@@ -34,6 +34,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserApplicationalServ
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.VolunteerProfileService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.repository.VolunteerProfileRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository
@@ -228,12 +230,6 @@ class SpockTest extends Specification {
     public static final String ACTIVITY_DESCRIPTION_2 = "activity description 2"
     public static final String ACTIVITY_SUSPENSION_JUSTIFICATION_VALID = "This is a valid justification."
 
-    // volunteer profile
-    public static final String VOLUNTEER_PROFILE_SHORT_BIO_VALID = "Valid short bio."
-
-    // participation
-    public static final String VALID_VOLUNTEER_REVIEW = "Valid volunteer review."
-
     @Autowired
     ActivityRepository activityRepository
 
@@ -277,6 +273,7 @@ class SpockTest extends Specification {
     public static final int MAX_REVIEW_LENGTH = 100
     public static final String MEMBER_REVIEW = "The volunteer did an excellent job."
     public static final String VOLUNTEER_REVIEW = "The activity was fun."
+    public static final String VALID_VOLUNTEER_REVIEW = "Valid volunteer review."
 
     def createParticipation(activity, volunteer, participationDto ) {
         participationDto.volunteerId = volunteer.getId()
@@ -326,6 +323,15 @@ class SpockTest extends Specification {
         return report
     }
 
+    // volunteer profile
+    public static final String VOLUNTEER_PROFILE_SHORT_BIO_VALID = "Valid short bio."
+
+    @Autowired
+    VolunteerProfileService volunteerProfileService
+
+    @Autowired
+    VolunteerProfileRepository volunteerProfileRepository
+
     // clean database
 
     def deleteAll() {
@@ -339,7 +345,7 @@ class SpockTest extends Specification {
         userRepository.deleteAll()
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
-
+        volunteerProfileRepository.deleteAll()
     }
 
 
