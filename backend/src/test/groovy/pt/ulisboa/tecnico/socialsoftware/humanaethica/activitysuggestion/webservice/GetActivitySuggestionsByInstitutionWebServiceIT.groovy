@@ -88,4 +88,57 @@ class GetActivitySuggestionsByInstitutionWebServiceIT extends SpockTest {
         deleteAll()
     }
 
+    def "login as member, and try to get activity suggestions list with an invalid institution id"() {
+        given:
+        demoMemberLogin()
+
+        when:
+        webClient.get()
+                .uri("/activitySuggestions/9999")
+                .headers { httpHeaders -> httpHeaders.putAll(headers) }
+                .retrieve()
+                .bodyToFlux(ActivitySuggestionDto.class)
+                .collectList()
+                .block()
+
+        then: "an error is returned"
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+    }
+
+    def "login as a volunteer, and try to get activity suggestions list"() {
+        given:
+        demoVolunteerLogin()
+
+        when:
+        webClient.get()
+                .uri("/activitySuggestions/" + institution.id)
+                .headers { httpHeaders -> httpHeaders.putAll(headers) }
+                .retrieve()
+                .bodyToFlux(ActivitySuggestionDto.class)
+                .collectList()
+                .block()
+
+        then: "an error is returned"
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+    }
+
+    def "login as an admin, and try to get activity suggestions list"() {
+        given:
+        demoAdminLogin()
+
+        when:
+        webClient.get()
+                .uri("/activitySuggestions/" + institution.id)
+                .headers { httpHeaders -> httpHeaders.putAll(headers) }
+                .retrieve()
+                .bodyToFlux(ActivitySuggestionDto.class)
+                .collectList()
+                .block()
+
+        then: "an error is returned"
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+    }
 }
