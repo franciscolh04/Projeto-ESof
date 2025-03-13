@@ -44,6 +44,7 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         volunteerProfileDto.setAverageRating(avgRating)
         volunteerProfileDto.setSelectedParticipationsIds(list)
 
+
         when:
         def result = new VolunteerProfile(volunteer, volunteerProfileDto)
 
@@ -54,6 +55,8 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         result.getNumTotalAssessments() == totalAss
         result.getAverageRating() == avgRating
         result.getSelectedParticipations().collect { it.getId() } == list
+        result.getVolunteer() == volunteer
+
 
 
         where:
@@ -61,6 +64,13 @@ class CreateVolunteerProfileMethodTest extends SpockTest {
         "bom"   | "bom"   | "bom"   | 1         | [1, 2, 3] | 7        | 5         | 3        | "Valid        bio"
         "mau"   | "mau"   | null    | 3.5       | [1,2]     | 5        | 5         | 2        | "B            i"
         null    | null    | null    | null      | []        | 5        | 5         | 0        | VOLUNTEER_PROFILE_SHORT_BIO_VALID
+        "bom"   | "bom"   | "bom"   | null      | [1, 2, 3] | 7        | null      | 3        | "Valid        bio"
+        "bom"   | "bom"   | "bom"   | 1         | []        | 7        | 5         | null     | "Valid        bio"
+        "bom"   | "bom"   | "bom"   | 1         | []        | 7        | null      | null     | "Valid        bio"
+
+
+
+
 
     }
 
