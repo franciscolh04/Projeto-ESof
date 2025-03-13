@@ -122,6 +122,7 @@ public class VolunteerProfile {
         List<Participation> allParticipations = this.volunteer.getParticipations();
         this.selectedParticipations = allParticipations.stream()
                 .filter(participation -> selectedParticipationsIds.contains(participation.getId()))
+                .peek(participation -> participation.setVolunteerProfile(this))
                 .collect(Collectors.toList());
     }
 

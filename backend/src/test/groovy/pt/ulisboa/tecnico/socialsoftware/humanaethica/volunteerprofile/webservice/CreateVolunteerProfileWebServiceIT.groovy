@@ -50,9 +50,6 @@ class CreateVolunteerProfileWebServiceIT extends SpockTest {
 
 
     def "volunteer creates volunteer profile"() {
-        given:
-        //demoVolunteerLogin()
-
         when:
         def response = webClient.post()
                 .uri('/volunteers/' + volunteer.id + '/profile')
@@ -76,7 +73,7 @@ class CreateVolunteerProfileWebServiceIT extends SpockTest {
         volunteerProfile.numTotalParticipations == VOLUNTEER_PROFILE_NUM_TOTAL_PARTICIPATIONS_VALID
         volunteerProfile.numTotalAssessments == VOLUNTEER_PROFILE_NUM_TOTAL_ASSESSMENTS_VALID
         volunteerProfile.averageRating == VOLUNTEER_PROFILE_AVERAGE_RATING_VALID
-        //volunteerProfile.selectedParticipations.size() == 4
+        volunteerProfile.selectedParticipations.size() == 4
     }
 
     def "member tries to create volunteer profile"() {
