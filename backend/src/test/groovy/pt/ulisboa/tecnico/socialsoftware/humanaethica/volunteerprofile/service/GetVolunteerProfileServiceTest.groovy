@@ -17,12 +17,27 @@ class GetVolunteerProfileServiceTest extends SpockTest {
     public static final String NO_EXIST = 'noExist'
     def volunteer
 
-    @Unroll
-    def 'invalid arguments: userId=#userId | errorMessage=#errorMessage'() {
-        given:
+    def setup() {
         volunteer = new Volunteer()
         userRepository.save(volunteer)
+    }
 
+    def 'get volunteerProfile' () {
+        given:
+        def volunteerProfile = new VolunteerProfile()
+        volunteerProfile.volunteer = volunteer
+        volunteer.volunteerProfile = volunteerProfile
+        volunteerProfileRepository.save(volunteerProfile)
+
+        when:
+        def result = volunteerProfileService.getVolunteerProfile(volunteer.id)
+
+        then: "the volunteer profile is returned"
+        result.id == volunteerProfile.id
+    }
+
+    @Unroll
+    def 'invalid arguments: userId=#userId | errorMessage=#errorMessage'() {
         when:
         volunteerProfileService.getVolunteerProfile(getVolunteerId(userId))
 
