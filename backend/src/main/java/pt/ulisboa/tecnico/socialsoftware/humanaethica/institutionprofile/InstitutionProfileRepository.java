@@ -14,7 +14,7 @@ import java.util.Optional;
 @Transactional
 public interface InstitutionProfileRepository extends JpaRepository<InstitutionProfile, Integer> {
     
-    @Query(value = "SELECT p FROM institution_profile p WHERE p.institution.id = :institutionId",nativeQuery = true)
+    @Query(value = "SELECT * FROM institution_profile WHERE institution_id = :institutionId",nativeQuery = true)
     Optional<InstitutionProfile> getInstitutionProfileByInstitutionID(Integer institutionId);
 
 }
