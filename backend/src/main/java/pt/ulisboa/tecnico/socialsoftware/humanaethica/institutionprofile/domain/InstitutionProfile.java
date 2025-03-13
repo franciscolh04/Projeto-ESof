@@ -44,7 +44,7 @@ public class InstitutionProfile {
 
         updateInstitutionProfile();
 
-        updateAssementsInstitutionProfile();
+        updateAssessmentsInstitutionProfile();
 
         if(institution.getActivities() != null){
             updateAverageRating();
@@ -53,14 +53,6 @@ public class InstitutionProfile {
         setShortDescription(institutionProfileDto.getShortDescription());
 
         verifyInvariants();
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getShortDescription() {
@@ -127,7 +119,7 @@ public class InstitutionProfile {
 
     public void setAssessments(List<Assessment> assessments) {
         this.assessments = assessments;
-        updateAssementsInstitutionProfile();
+        updateAssessmentsInstitutionProfile();
         setNumAssessments(assessments.size());
         verifyInvariants();
     }
@@ -145,7 +137,7 @@ public class InstitutionProfile {
         verifyInvariants();
     }
 
-    public void updateAssementsInstitutionProfile() {
+    public void updateAssessmentsInstitutionProfile() {
         // ensure that the institution profile is set for each assessment
         // even if they were crated before the institution profile
         for (Assessment assessment : assessments) {
@@ -157,23 +149,23 @@ public class InstitutionProfile {
         setNumMembers(institution.getMembers() != null ? institution.getMembers().size() : 0);
         setNumActivities(institution.getActivities() != null ? institution.getActivities().size() : 0);
         setNumAssessments(institution.getAssessments() != null ? institution.getAssessments().size() : 0);
-        if(institution.getAssessments() != null){updateAssements();}
+        if(institution.getAssessments() != null){updateAssessments();}
         if(institution.getActivities() != null){updateAverageRating();}
     }
 
 
-    public void updateAssements() {
+    public void updateAssessments() {
 
         // TODO: set a maximum number of assessments to be displayed based
         // on user input
-        assessments = new ArrayList<>(institution.getAssessments());
+        this.assessments = new ArrayList<>(institution.getAssessments());
 
     }
 
     public void updateNumVolunteers() {
         
-        numVolunteers = institution.getActivities().stream()
-        .mapToInt(Activity::getNumberOfParticipatingVolunteers).sum();
+        setNumVolunteers(institution.getActivities().stream()
+        .mapToInt(Activity::getNumberOfParticipatingVolunteers).sum());
 
     }
 
@@ -188,7 +180,7 @@ public class InstitutionProfile {
             .mapToDouble(Participation::getVolunteerRating)
             .sum();
     
-        averageRating = numVolunteers > 0 ? totalRating / numVolunteers : 0.0;
+        setAverageRating(numVolunteers > 0 ? totalRating / numVolunteers : 0.0);
     }
     
 
