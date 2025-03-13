@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
@@ -50,6 +51,19 @@ public class ActivitySuggestionService {
         activitySuggestionRepository.save(activitySuggestion);
 
         return new ActivitySuggestionDto(activitySuggestion);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<ActivitySuggestionDto> getActivitySuggestionsByInstitution(Integer institutionId) {
+
+        if (institutionId == null) throw new HEException(INSTITUTION_NOT_FOUND);
+        Institution institution = institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
+
+        return institution.getActivitySuggestions().stream()
+                .map(ActivitySuggestionDto::new)
+                .sorted(Comparator.comparing(ActivitySuggestionDto::getCreationDate))
+                .collect(Collectors.toList());
     }
 
 }
