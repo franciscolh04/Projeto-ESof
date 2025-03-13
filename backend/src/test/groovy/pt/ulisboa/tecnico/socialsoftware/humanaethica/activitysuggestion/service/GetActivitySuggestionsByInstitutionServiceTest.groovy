@@ -4,7 +4,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.BeanConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto;
+import spock.lang.Unroll;
+
 
 @DataJpaTest
 class GetActivitySuggestionsByInstitutionServiceTest extends SpockTest {
@@ -44,6 +48,21 @@ class GetActivitySuggestionsByInstitutionServiceTest extends SpockTest {
         result.each {
             assert it.getInstitutionId() == institution.getId()
         }
+    }
+
+    @Unroll
+    def "invalid arguments for getActivitySuggestionsByInstitution: institutionId=#institutionId"() {
+        when:
+        activitySuggestionService.getActivitySuggestionsByInstitution(institutionId);
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == errorMessage
+
+        where:
+        institutionId | errorMessage
+        null          | ErrorMessage.INSTITUTION_NOT_FOUND
+        222           | ErrorMessage.INSTITUTION_NOT_FOUND
     }
 
     @TestConfiguration
