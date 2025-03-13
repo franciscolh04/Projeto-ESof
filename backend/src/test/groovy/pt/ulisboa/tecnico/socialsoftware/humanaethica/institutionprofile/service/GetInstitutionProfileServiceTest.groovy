@@ -32,6 +32,7 @@ class GetInstitutionProfileServiceTest extends SpockTest {
 
         then:
         result.institutionId == institution.id
+        result.shortDescription == SHORTDESCRIPTION
     }
 
 

@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto.InstitutionProfileDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.InstitutionProfileRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.domain.InstitutionProfile
 import org.junit.jupiter.api.Test
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -21,6 +22,7 @@ class GetInstitutionProfileWebServiceIT extends SpockTest {
 
     def institution
     def institutionProfileDto
+    def institutionProfile
 
     def setup() {
         deleteAll()
@@ -30,15 +32,36 @@ class GetInstitutionProfileWebServiceIT extends SpockTest {
         headers.setContentType(MediaType.APPLICATION_JSON)
 
         institution = institutionService.getDemoInstitution()
+        
 
         institutionProfileDto = new InstitutionProfileDto()
         institutionProfileDto.shortDescription = SHORTDESCRIPTION
+
+        institutionProfile = new InstitutionProfile(institution, institutionProfileDto)
+        institutionProfileRepository.save(institutionProfile)
     }
+
+    def "non authenticated user get institution Profile"(){
+       when:
+        def response = webClient.get()
+                .uri('/institutionProfile/' + institution.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(InstitutionProfileDto.class)
+                .collectList()
+                .block()
+
+        then:
+        response.size() == 1
+        response.get(0).institutionId == institution.id
+        response.get(0).shortDescription == SHORTDESCRIPTION
+    }
+
     
     def 'institution does not exist'() {
         when:
         def response = webClient.get()
-                .uri('/institutionProfile/' + '222' + '/profile')
+                .uri('/institutionProfile/' + 222 + '/profile')
                 .headers(httpHeaders -> httpHeaders.putAll(headers))
                 .retrieve()
                 .bodyToFlux(InstitutionProfileDto.class)
