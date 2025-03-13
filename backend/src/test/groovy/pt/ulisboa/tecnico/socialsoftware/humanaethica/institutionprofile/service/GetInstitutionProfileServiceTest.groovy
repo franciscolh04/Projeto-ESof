@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.InstitutionProfileRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.domain.InstitutionProfile
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.InstitutionProfileService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto.InstitutionProfileDto
@@ -17,6 +18,20 @@ class GetInstitutionProfileServiceTest extends SpockTest {
 
     def setup() {
         institution = institutionService.getDemoInstitution()
+    }
+
+    def "get Institution Profile Sucessfully"(){
+        given:
+        def institutionProfileDto = new InstitutionProfileDto()
+        institutionProfileDto.shortDescription = SHORTDESCRIPTION
+
+        def institutionProfile = createInstitutionProfile(institution, institutionProfileDto)
+        
+        when:
+        def result = institutionProfileService.getInstitutionProfile(institution.id)
+
+        then:
+        result.institutionId == institution.id
     }
 
 
