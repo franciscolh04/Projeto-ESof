@@ -78,4 +78,42 @@ class CreateVolunteerProfileWebServiceIT extends SpockTest {
         volunteerProfile.averageRating == VOLUNTEER_PROFILE_AVERAGE_RATING_VALID
         //volunteerProfile.selectedParticipations.size() == 4
     }
+
+    def "member tries to create volunteer profile"() {
+        given:
+        def member = demoMemberLogin()
+
+        when:
+        webClient.post()
+                .uri('/volunteers/' + member.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(volunteerProfileDto)
+                .retrieve()
+                .bodyToMono(VolunteerProfileDto.class)
+                .block()
+
+        then: "error is thrown"
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+        volunteerProfileRepository.findAll().size() == 0
+    }
+
+    def "admin tries to create volunteer profile"() {
+        given:
+        def admin = demoAdminLogin()
+
+        when:
+        webClient.post()
+                .uri('/volunteers/' + admin.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(volunteerProfileDto)
+                .retrieve()
+                .bodyToMono(VolunteerProfileDto.class)
+                .block()
+
+        then: "error is thrown"
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+        volunteerProfileRepository.findAll().size() == 0
+    }
 }
