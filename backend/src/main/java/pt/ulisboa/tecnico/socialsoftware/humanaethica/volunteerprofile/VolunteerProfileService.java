@@ -21,6 +21,18 @@ public class VolunteerProfileService {
     UserRepository userRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
+    public VolunteerProfileDto getVolunteerProfile(Integer userId) {
+        if (userId == null) throw new HEException(USER_NOT_FOUND);
+        Volunteer volunteer = (Volunteer) userRepository.findById(userId).orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
+
+        VolunteerProfile volunteerProfile = volunteer.getProfile();
+
+        if (volunteerProfile == null) throw new HEException(VOLUNTEER_PROFILE_NOT_FOUND);
+
+        return new VolunteerProfileDto(volunteerProfile);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public VolunteerProfileDto createVolunteerProfile(Integer userId, VolunteerProfileDto volunteerProfileDto) {
         if (userId == null) throw new HEException(USER_NOT_FOUND);
         Volunteer volunteer = (Volunteer) userRepository.findById(userId).orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
