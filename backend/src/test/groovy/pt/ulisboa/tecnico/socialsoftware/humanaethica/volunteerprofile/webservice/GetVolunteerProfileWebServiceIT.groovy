@@ -38,7 +38,7 @@ class GetVolunteerProfileWebServiceIT extends SpockTest {
 
     def 'get volunteerProfile as a volunteer' () {
         given:
-        def authVolunteer = demoVolunteerLogin()
+        demoVolunteerLogin()
 
         when:
         def response = webClient.get()
@@ -52,4 +52,48 @@ class GetVolunteerProfileWebServiceIT extends SpockTest {
         response.id == volunteerProfile.id
     }
 
+    def 'get volunteerProfile as a member' () {
+        given:
+        demoMemberLogin()
+
+        when:
+        def response = webClient.get()
+                .uri('/volunteers/' + volunteer.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(VolunteerProfileDto.class)
+                .block()
+
+        then: "the volunteer profile is returned"
+        response.id == volunteerProfile.id
+    }
+
+    def 'get volunteerProfile as an admin' () {
+        given:
+        demoAdminLogin()
+
+        when:
+        def response = webClient.get()
+                .uri('/volunteers/' + volunteer.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(VolunteerProfileDto.class)
+                .block()
+
+        then: "the volunteer profile is returned"
+        response.id == volunteerProfile.id
+    }
+
+    def 'get volunteerProfile as an unauthenticated user' () {
+        when:
+        def response = webClient.get()
+                .uri('/volunteers/' + volunteer.id + '/profile')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(VolunteerProfileDto.class)
+                .block()
+
+        then: "the volunteer profile is returned"
+        response.id == volunteerProfile.id
+    }
 }
