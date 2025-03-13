@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.domain.InstitutionProfile;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
@@ -24,6 +25,9 @@ public class Assessment {
     private Institution institution;
     @ManyToOne
     private Volunteer volunteer;
+    @ManyToOne
+    @JoinColumn(name = "institution_profile_id")
+    private InstitutionProfile institutionProfile;
 
     public Assessment() {}
 
@@ -31,6 +35,7 @@ public class Assessment {
         setReview(assessmentDto.getReview());
         setReviewDate(DateHandler.now());
         setInstitution(institution);
+        setInstitutionProfile(institution.getInstitutionProfile());
         setVolunteer(volunteer);
 
         verifyInvariants();
@@ -76,6 +81,14 @@ public class Assessment {
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
         this.volunteer.addAssessment(this);
+    }
+
+    public InstitutionProfile getInstitutionProfile() {
+        return institutionProfile;
+    }
+
+    public void setInstitutionProfile(InstitutionProfile institutionProfile) {
+        this.institutionProfile = institutionProfile;
     }
 
     public void update(AssessmentDto assessmentDto) {
