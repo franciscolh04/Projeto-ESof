@@ -62,7 +62,7 @@ public class ActivitySuggestionService {
 
         return institution.getActivitySuggestions().stream()
                 .map(ActivitySuggestionDto::new)
-                .sorted(Comparator.comparing(ActivitySuggestionDto::getCreationDate))
+                .sorted(Comparator.comparing(ActivitySuggestionDto::getStartingDate))
                 .collect(Collectors.toList());
     }
 

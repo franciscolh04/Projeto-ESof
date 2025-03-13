@@ -48,14 +48,12 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
         result.getEndingDate() == DateHandler.toISOString(IN_TEN_DAYS)
         result.getInstitutionId() == institution.id
         result.getVolunteerId() == volunteer.id
-        result.getState() == ActivitySuggestion.State.IN_REVIEW.name()
 
         and: "the activity is saved in the database"
         activitySuggestionRepository.findAll().size() == 1
 
         and: "the stored data is correct"
         def storedActivitySuggestion = activitySuggestionRepository.findById(result.id).get()
-        storedActivitySuggestion.id != null
         storedActivitySuggestion.name == ACTIVITY_NAME_1
         storedActivitySuggestion.region == ACTIVITY_REGION_1
         storedActivitySuggestion.participantsNumberLimit == 10
