@@ -33,7 +33,7 @@ public class VolunteerProfile {
     private Double averageRating;
 
 
-    @OneToMany(mappedBy = "volunteerProfile")
+    @OneToMany(mappedBy = "volunteerProfile", fetch = FetchType.EAGER)
     private List<Participation> selectedParticipations = new ArrayList<>();
 
     @OneToOne

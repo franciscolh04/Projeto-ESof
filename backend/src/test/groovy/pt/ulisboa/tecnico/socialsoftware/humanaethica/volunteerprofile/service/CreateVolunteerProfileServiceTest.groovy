@@ -16,9 +16,7 @@ import spock.lang.Shared
 class CreateVolunteerProfileServiceTest extends SpockTest {
     public static final String EXIST = 'exist'
     public static final String NO_EXIST = 'noExist'
-    @Shared
     def volunteer
-    @Shared
     def participations
 
     def setup() {

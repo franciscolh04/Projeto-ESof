@@ -14,14 +14,14 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/volunteerprofiles")
+@RequestMapping("/volunteers")
 public class VolunteerProfileController {
     @Autowired
     private VolunteerProfileService volunteerProfileService;
 
     private static final Logger logger = LoggerFactory.getLogger(VolunteerProfileController.class);
 
-    @PostMapping("/{volunteerId}")
+    @PostMapping("/{volunteerId}/profile")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
     public VolunteerProfileDto createVolunteerProfile(Principal principal, @PathVariable Integer volunteerId, @Valid @RequestBody VolunteerProfileDto volunteerProfileDto) {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
