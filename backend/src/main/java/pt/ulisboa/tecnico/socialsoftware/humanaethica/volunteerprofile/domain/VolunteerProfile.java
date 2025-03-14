@@ -109,9 +109,6 @@ public class VolunteerProfile {
         this.selectedParticipations.add(participation);
     }
 
-    public void deleteSelectedParticipation(Participation participation) {
-        this.selectedParticipations.remove(participation);
-    }
 
     public void setSelectedParticipations(List<Integer> selectedParticipationsIds) {
         if (selectedParticipationsIds == null || selectedParticipationsIds.isEmpty()) {
@@ -154,8 +151,10 @@ public class VolunteerProfile {
     }
 
     private void minimumSelectedParticipationsConstraint() {
-        if (this.selectedParticipations != null && numTotalParticipations != null && numTotalAssessments != null && this.selectedParticipations.size() < Math.min(numTotalParticipations / 2, numTotalAssessments)) {
-            throw new HEException(SELECTED_PARTICIPATIONS_INVALID_NUMBER);
+        if ( numTotalParticipations != null && numTotalAssessments != null) {
+            if (this.selectedParticipations.size() < Math.min(numTotalParticipations / 2, numTotalAssessments)) {
+                throw new HEException(SELECTED_PARTICIPATIONS_INVALID_NUMBER);
+            }
         }
     }
 }

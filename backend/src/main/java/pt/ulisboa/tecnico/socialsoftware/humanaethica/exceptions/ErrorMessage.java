@@ -72,7 +72,8 @@ public enum ErrorMessage {
     SELECTED_PARTICIPATION_NOT_ASSESSED("All selected participations must be assessed."),
     SELECTED_PARTICIPATIONS_INVALID_NUMBER("The number of selected participations must be at least the smaller value between half of the total participations and the total assessed participations."),
     VOLUNTEER_PROFILE_ALREADY_EXISTS("The volunteer already has a profile"),
-    
+    VOLUNTEER_PROFILE_NOT_FOUND("Volunteer profile not found for volunteer with id %d."),
+
     // Institution Profile
     INVALID_INSTITUTION_PROFILE("Invalid institution profile"),
     INVALID_SHORT_DESCRIPTION("Invalid short description"),
@@ -85,7 +86,6 @@ public enum ErrorMessage {
     ACTIVITY_SUGGESTION_DESCRIPTION_TOO_SHORT("An activity suggestion description must have at least 10 characters"),
     ACTIVITY_SUGGESTION_DEADLINE_TOO_SOON("The application deadline for activity suggestions must be at least 7 days after the creation date"),
     ACTIVITY_SUGGESTION_ALREADY_MADE_BY_VOLUNTEER("Activity suggestion already made by volunteer"),
-
     VOLUNTEER_NOT_FOUND("Volunteer not found."),
     ;
 

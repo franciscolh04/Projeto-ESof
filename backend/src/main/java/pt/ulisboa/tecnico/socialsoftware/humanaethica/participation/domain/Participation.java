@@ -39,7 +39,6 @@ public class Participation {
     public Participation(Activity activity, Volunteer volunteer, ParticipationDto participationDto) {
         setActivity(activity);
         setVolunteer(volunteer);
-        //setVolunteerProfile(volunteerProfile);
         setAcceptanceDate(LocalDateTime.now());
         setMemberRating(participationDto.getMemberRating());
         setMemberReview(participationDto.getMemberReview());
@@ -133,11 +132,6 @@ public class Participation {
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
         this.volunteer.addParticipation(this);
-    }
-
-    
-    public VolunteerProfile getVolunteerProfile() {
-        return volunteerProfile;
     }
 
     public void setVolunteerProfile(VolunteerProfile volunteerProfile) {

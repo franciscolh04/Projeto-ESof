@@ -21,6 +21,11 @@ public class VolunteerProfileController {
 
     private static final Logger logger = LoggerFactory.getLogger(VolunteerProfileController.class);
 
+    @GetMapping("/{volunteerId}/profile")
+    public VolunteerProfileDto getVolunteerProfile(@PathVariable Integer volunteerId) {
+        return volunteerProfileService.getVolunteerProfile(volunteerId);
+    }
+
     @PostMapping("/{volunteerId}/profile")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
     public VolunteerProfileDto createVolunteerProfile(Principal principal, @PathVariable Integer volunteerId, @Valid @RequestBody VolunteerProfileDto volunteerProfileDto) {
