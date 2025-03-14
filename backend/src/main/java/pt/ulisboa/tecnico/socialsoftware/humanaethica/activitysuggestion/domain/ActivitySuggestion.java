@@ -32,7 +32,7 @@ public class ActivitySuggestion {
     private Integer participantsNumberLimit;
 
     @Enumerated(EnumType.STRING)
-    private ActivitySuggestion.State state = ActivitySuggestion.State.IN_REVIEW;
+    private ActivitySuggestion.State state;
 
     @ManyToOne
     @JoinColumn(name = "institution", nullable = false)
@@ -55,6 +55,8 @@ public class ActivitySuggestion {
         setStartingDate(DateHandler.toLocalDateTime(activitySuggestionDto.getStartingDate()));
         setEndingDate(DateHandler.toLocalDateTime(activitySuggestionDto.getEndingDate()));
         setParticipantsNumberLimit(activitySuggestionDto.getParticipantsNumberLimit());
+
+        setState(ActivitySuggestion.State.IN_REVIEW);
 
         this.creationDate = LocalDateTime.now();
 
