@@ -34,6 +34,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserApplicationalServ
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.dto.VolunteerProfileDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.VolunteerProfileService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.repository.VolunteerProfileRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository
@@ -276,6 +279,7 @@ class SpockTest extends Specification {
     public static final int MAX_REVIEW_LENGTH = 100
     public static final String MEMBER_REVIEW = "The volunteer did an excellent job."
     public static final String VOLUNTEER_REVIEW = "The activity was fun."
+    public static final String VALID_VOLUNTEER_REVIEW = "Valid volunteer review."
 
     def createParticipation(activity, volunteer, participationDto ) {
         participationDto.volunteerId = volunteer.getId()
@@ -325,6 +329,31 @@ class SpockTest extends Specification {
         return report
     }
 
+    // volunteer profile
+    public static final String VOLUNTEER_PROFILE_SHORT_BIO_VALID = "Valid short bio."
+    public static final Integer VOLUNTEER_PROFILE_NUM_TOTAL_ENROLLMENTS_VALID = 10
+    public static final Integer VOLUNTEER_PROFILE_NUM_TOTAL_PARTICIPATIONS_VALID = 6
+    public static final Integer VOLUNTEER_PROFILE_NUM_TOTAL_ASSESSMENTS_VALID = 4
+    public static final Double VOLUNTEER_PROFILE_AVERAGE_RATING_VALID = 3
+
+    def createVolunteerProfileDto(shortBio, numTotalEnrollments,numTotalParticipations, numTotalAssessments, averageRating, selectedParticipationsIds) {
+        def volunteerProfileDto = new VolunteerProfileDto()
+        volunteerProfileDto.setShortBio(shortBio)
+        volunteerProfileDto.setNumTotalEnrollments(numTotalEnrollments)
+        volunteerProfileDto.setNumTotalParticipations(numTotalParticipations)
+        volunteerProfileDto.setNumTotalAssessments(numTotalAssessments)
+        volunteerProfileDto.setAverageRating(averageRating)
+        volunteerProfileDto.setSelectedParticipationsIds(selectedParticipationsIds)
+        volunteerProfileDto
+    }
+
+    @Autowired
+    VolunteerProfileService volunteerProfileService
+
+    @Autowired
+    VolunteerProfileRepository volunteerProfileRepository
+
+    
     // institutionProfile
 
     public static final String SHORTDESCRIPTION = "short description"
@@ -355,7 +384,7 @@ class SpockTest extends Specification {
         institutionProfileRepository.deleteAll()
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
-
+        volunteerProfileRepository.deleteAll()
     }
 
 
