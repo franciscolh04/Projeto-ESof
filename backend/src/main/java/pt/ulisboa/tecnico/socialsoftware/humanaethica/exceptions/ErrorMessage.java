@@ -79,6 +79,14 @@ public enum ErrorMessage {
     INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT("Institution profile description is too short (must have at least 10 characters)"),
     MEMBER_NOT_IN_INSTITUTION("Member is not in the institution"),
 
+
+    // ActivitySuggestion
+    ACTIVITY_SUGGESTION_INVALID("The activity suggestion is invalid"),
+    ACTIVITY_SUGGESTION_DESCRIPTION_TOO_SHORT("An activity suggestion description must have at least 10 characters"),
+    ACTIVITY_SUGGESTION_DEADLINE_TOO_SOON("The application deadline for activity suggestions must be at least 7 days after the creation date"),
+    ACTIVITY_SUGGESTION_ALREADY_MADE_BY_VOLUNTEER("Activity suggestion already made by volunteer"),
+
+    VOLUNTEER_NOT_FOUND("Volunteer not found."),
     ;
 
     public final String label;

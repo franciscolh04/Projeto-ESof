@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment
@@ -41,7 +42,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserReposi
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.repository.ActivitySuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.ActivityService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.ActivitySuggestionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
@@ -77,6 +80,11 @@ class SpockTest extends Specification {
     public static final LocalDateTime IN_ONE_DAY = DateHandler.now().plusDays(1)
     public static final LocalDateTime IN_TWO_DAYS = DateHandler.now().plusDays(2)
     public static final LocalDateTime IN_THREE_DAYS = DateHandler.now().plusDays(3)
+    public static final LocalDateTime IN_SIX_DAYS = DateHandler.now().plusDays(6)
+    public static final LocalDateTime IN_SEVEN_DAYS = DateHandler.now().plusDays(7)
+    public static final LocalDateTime IN_EIGHT_DAYS = DateHandler.now().plusDays(8)
+    public static final LocalDateTime IN_NINE_DAYS = DateHandler.now().plusDays(9)
+    public static final LocalDateTime IN_TEN_DAYS = DateHandler.now().plusDays(10)
 
     // institution
 
@@ -255,6 +263,24 @@ class SpockTest extends Specification {
         activityDto
     }
 
+    @Autowired
+    ActivitySuggestionRepository activitySuggestionRepository
+
+    @Autowired
+    ActivitySuggestionService activitySuggestionService
+
+    def createActivitySuggestionDto(name, region, number, description, deadline, start, end) {
+        def activitySuggestionDto = new ActivitySuggestionDto()
+        activitySuggestionDto.setName(name)
+        activitySuggestionDto.setRegion(region)
+        activitySuggestionDto.setParticipantsNumberLimit(number)
+        activitySuggestionDto.setDescription(description)
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(start))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(end))
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(deadline))
+        activitySuggestionDto
+    }
+
 
     // enrollment
 
@@ -379,6 +405,7 @@ class SpockTest extends Specification {
         reportRepository.deleteAll()
         activityRepository.deleteAllActivityTheme()
         activityRepository.deleteAll()
+        activitySuggestionRepository.deleteAll()
         authUserRepository.deleteAll()
         userRepository.deleteAll()
         institutionProfileRepository.deleteAll()
