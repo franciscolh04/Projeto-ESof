@@ -199,7 +199,7 @@ public class InstitutionProfile {
     }
 
     public void verifyAssessmentSelection() {
-        if (institution.getAssessments() == null){
+        if (this.institution.getAssessments() == null){
             return;
         }
         if (this.numAssessments < institution.getAssessments().size() * 0.5) {
@@ -208,7 +208,7 @@ public class InstitutionProfile {
     }
 
     private void verifyRecentAssessments() {
-        if (this.assessments.isEmpty() || this.institution == null || this.institution.getAssessments().isEmpty()) {
+        if (this.assessments.isEmpty() || this.institution.getAssessments() == null ) {
             return;
         }
         
