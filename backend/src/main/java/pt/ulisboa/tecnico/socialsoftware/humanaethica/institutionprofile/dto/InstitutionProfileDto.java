@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.domain.InstitutionProfile;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class InstitutionProfileDto {
     private String shortDescription;
     private Integer numMembers;
     private Integer numActivities;
-    private Integer numAccessments;
+    private Integer numAssessments;
     private Integer numVolunteers;
     private Double averageRating;
     // We won't need the institution object here, only its id
@@ -22,17 +23,14 @@ public class InstitutionProfileDto {
     public InstitutionProfileDto() {}
 
     public InstitutionProfileDto(InstitutionProfile institutionProfile) {
-        this.shortDescription = institutionProfile.getShortDescription();
-        this.numMembers = institutionProfile.getNumMembers();
-        this.numActivities = institutionProfile.getNumActivities();
-        this.numAccessments = institutionProfile.getNumAssessments();
-        this.numVolunteers = institutionProfile.getNumVolunteers();
-        this.averageRating = institutionProfile.getAverageRating();
-        this.institutionId = institutionProfile.getInstitution().getId();
-        this.assessments = institutionProfile.getAssessments().stream()
-            .map(assessment->new AssessmentDto(assessment))
-            .toList();
-        
+        setShortDescription(institutionProfile.getShortDescription());
+        setNumMembers(institutionProfile.getNumMembers());
+        setNumActivities(institutionProfile.getNumActivities());
+        setNumAssessments(institutionProfile.getNumAssessments());
+        setNumVolunteers(institutionProfile.getNumVolunteers());
+        setAverageRating(institutionProfile.getAverageRating());
+        setInstitutionId(institutionProfile.getInstitution().getId());
+        setAssessments(institutionProfile.getAssessments());
     }
 
     public String getShortDescription() {
@@ -59,12 +57,12 @@ public class InstitutionProfileDto {
         this.numActivities = numActivities;
     }
 
-    public Integer getNumAccessments() {
-        return numAccessments;
+    public Integer getNumAssessments() {
+        return numAssessments;
     }
 
-    public void setNumAssessments(Integer numAccessments) {
-        this.numAccessments = numAccessments;
+    public void setNumAssessments(Integer numAssessments) {
+        this.numAssessments = numAssessments;
     }
 
     public Integer getNumVolunteers() {
@@ -95,8 +93,13 @@ public class InstitutionProfileDto {
         return assessments;
     }
 
-    public void setAssessments(List<AssessmentDto> assessments) {
-        this.assessments = assessments;
+    public void setAssessments(List<Assessment> assessments) {
+        if (assessments != null){
+            this.assessments = assessments.stream()
+                .map(assessment->new AssessmentDto(assessment))
+                .toList();
+            setNumAssessments(assessments.size());
+        }
     }
 
 }
