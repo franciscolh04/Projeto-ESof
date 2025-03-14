@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.dto.ActivitySuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment
@@ -34,11 +35,16 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserApplicationalServ
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.dto.VolunteerProfileDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.VolunteerProfileService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.repository.VolunteerProfileRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.repository.ActivitySuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.ActivityService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activitysuggestion.ActivitySuggestionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
@@ -74,6 +80,11 @@ class SpockTest extends Specification {
     public static final LocalDateTime IN_ONE_DAY = DateHandler.now().plusDays(1)
     public static final LocalDateTime IN_TWO_DAYS = DateHandler.now().plusDays(2)
     public static final LocalDateTime IN_THREE_DAYS = DateHandler.now().plusDays(3)
+    public static final LocalDateTime IN_SIX_DAYS = DateHandler.now().plusDays(6)
+    public static final LocalDateTime IN_SEVEN_DAYS = DateHandler.now().plusDays(7)
+    public static final LocalDateTime IN_EIGHT_DAYS = DateHandler.now().plusDays(8)
+    public static final LocalDateTime IN_NINE_DAYS = DateHandler.now().plusDays(9)
+    public static final LocalDateTime IN_TEN_DAYS = DateHandler.now().plusDays(10)
 
     // institution
 
@@ -252,6 +263,24 @@ class SpockTest extends Specification {
         activityDto
     }
 
+    @Autowired
+    ActivitySuggestionRepository activitySuggestionRepository
+
+    @Autowired
+    ActivitySuggestionService activitySuggestionService
+
+    def createActivitySuggestionDto(name, region, number, description, deadline, start, end) {
+        def activitySuggestionDto = new ActivitySuggestionDto()
+        activitySuggestionDto.setName(name)
+        activitySuggestionDto.setRegion(region)
+        activitySuggestionDto.setParticipantsNumberLimit(number)
+        activitySuggestionDto.setDescription(description)
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(start))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(end))
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(deadline))
+        activitySuggestionDto
+    }
+
 
     // enrollment
 
@@ -276,6 +305,7 @@ class SpockTest extends Specification {
     public static final int MAX_REVIEW_LENGTH = 100
     public static final String MEMBER_REVIEW = "The volunteer did an excellent job."
     public static final String VOLUNTEER_REVIEW = "The activity was fun."
+    public static final String VALID_VOLUNTEER_REVIEW = "Valid volunteer review."
 
     def createParticipation(activity, volunteer, participationDto ) {
         participationDto.volunteerId = volunteer.getId()
@@ -325,6 +355,31 @@ class SpockTest extends Specification {
         return report
     }
 
+    // volunteer profile
+    public static final String VOLUNTEER_PROFILE_SHORT_BIO_VALID = "Valid short bio."
+    public static final Integer VOLUNTEER_PROFILE_NUM_TOTAL_ENROLLMENTS_VALID = 10
+    public static final Integer VOLUNTEER_PROFILE_NUM_TOTAL_PARTICIPATIONS_VALID = 6
+    public static final Integer VOLUNTEER_PROFILE_NUM_TOTAL_ASSESSMENTS_VALID = 4
+    public static final Double VOLUNTEER_PROFILE_AVERAGE_RATING_VALID = 3
+
+    def createVolunteerProfileDto(shortBio, numTotalEnrollments,numTotalParticipations, numTotalAssessments, averageRating, selectedParticipationsIds) {
+        def volunteerProfileDto = new VolunteerProfileDto()
+        volunteerProfileDto.setShortBio(shortBio)
+        volunteerProfileDto.setNumTotalEnrollments(numTotalEnrollments)
+        volunteerProfileDto.setNumTotalParticipations(numTotalParticipations)
+        volunteerProfileDto.setNumTotalAssessments(numTotalAssessments)
+        volunteerProfileDto.setAverageRating(averageRating)
+        volunteerProfileDto.setSelectedParticipationsIds(selectedParticipationsIds)
+        volunteerProfileDto
+    }
+
+    @Autowired
+    VolunteerProfileService volunteerProfileService
+
+    @Autowired
+    VolunteerProfileRepository volunteerProfileRepository
+
+    
     // institutionProfile
 
     public static final String SHORTDESCRIPTION = "short description"
@@ -350,12 +405,13 @@ class SpockTest extends Specification {
         reportRepository.deleteAll()
         activityRepository.deleteAllActivityTheme()
         activityRepository.deleteAll()
+        activitySuggestionRepository.deleteAll()
         authUserRepository.deleteAll()
         userRepository.deleteAll()
         institutionProfileRepository.deleteAll()
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
-
+        volunteerProfileRepository.deleteAll()
     }
 
 
