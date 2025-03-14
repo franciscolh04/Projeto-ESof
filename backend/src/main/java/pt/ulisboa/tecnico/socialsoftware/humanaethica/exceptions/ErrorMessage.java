@@ -72,6 +72,13 @@ public enum ErrorMessage {
     SELECTED_PARTICIPATION_NOT_ASSESSED("All selected participations must be assessed."),
     SELECTED_PARTICIPATIONS_INVALID_NUMBER("The number of selected participations must be at least the smaller value between half of the total participations and the total assessed participations."),
     VOLUNTEER_PROFILE_ALREADY_EXISTS("The volunteer already has a profile"),
+    
+    // Institution Profile
+    INVALID_INSTITUTION_PROFILE("Invalid institution profile"),
+    INVALID_SHORT_DESCRIPTION("Invalid short description"),
+    INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT("Institution profile description is too short (must have at least 10 characters)"),
+    MEMBER_NOT_IN_INSTITUTION("Member is not in the institution"),
+
     ;
 
     public final String label;

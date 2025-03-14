@@ -46,6 +46,10 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepo
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.Mailer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.domain.InstitutionProfile
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.InstitutionProfileService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.InstitutionProfileRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.dto.InstitutionProfileDto
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -124,6 +128,7 @@ class SpockTest extends Specification {
 
     @Autowired
     AuthUserRepository authUserRepository
+    
 
     @Autowired
     UserApplicationalService userServiceApplicational
@@ -348,6 +353,23 @@ class SpockTest extends Specification {
     @Autowired
     VolunteerProfileRepository volunteerProfileRepository
 
+    
+    // institutionProfile
+
+    public static final String SHORTDESCRIPTION = "short description"
+
+    @Autowired
+    InstitutionProfileRepository institutionProfileRepository
+    @Autowired
+    InstitutionProfileService institutionProfileService
+
+    def createInstitutionProfile(institution, institutionProfileDto) { 
+        def institutionProfile = new InstitutionProfile(institution, institutionProfileDto);
+        institutionProfileRepository.save(institutionProfile)
+        return institutionProfile
+    }
+
+
     // clean database
 
     def deleteAll() {
@@ -359,6 +381,7 @@ class SpockTest extends Specification {
         activityRepository.deleteAll()
         authUserRepository.deleteAll()
         userRepository.deleteAll()
+        institutionProfileRepository.deleteAll()
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
         volunteerProfileRepository.deleteAll()

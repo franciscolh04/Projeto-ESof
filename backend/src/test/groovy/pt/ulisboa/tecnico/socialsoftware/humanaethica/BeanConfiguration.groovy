@@ -23,6 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institutionprofile.InstitutionProfileService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.Mailer
 
 @TestConfiguration
@@ -61,6 +62,11 @@ class BeanConfiguration {
     @Bean
     UserApplicationalService userServiceApplicational() {
         return new UserApplicationalService()
+    }
+    
+    @Bean
+    InstitutionProfileService institutionProfileService() {
+        return new InstitutionProfileService()
     }
 
     @Bean
