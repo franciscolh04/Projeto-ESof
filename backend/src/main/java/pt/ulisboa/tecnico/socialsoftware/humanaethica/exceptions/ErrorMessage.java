@@ -67,12 +67,27 @@ public enum ErrorMessage {
     REPORT_AFTER_ACTIVTY_CLOSED("The activity period is already closed"),
     REPORT_NOT_FOUND("Report not found with id %d"),
 
+    // VolunteerProfile
+    SHORT_BIO_TOO_SHORT("Short bio must be at least 10 characters"),
+    SELECTED_PARTICIPATION_NOT_ASSESSED("All selected participations must be assessed."),
+    SELECTED_PARTICIPATIONS_INVALID_NUMBER("The number of selected participations must be at least the smaller value between half of the total participations and the total assessed participations."),
+    VOLUNTEER_PROFILE_ALREADY_EXISTS("The volunteer already has a profile"),
+    VOLUNTEER_PROFILE_NOT_FOUND("Volunteer profile not found for volunteer with id %d."),
+
+    // Institution Profile
+    INVALID_INSTITUTION_PROFILE("Invalid institution profile"),
+    INVALID_SHORT_DESCRIPTION("Invalid short description"),
+    INSTITUTION_PROFILE_DESCRIPTION_TOO_SHORT("Institution profile description is too short (must have at least 10 characters)"),
+    MEMBER_NOT_IN_INSTITUTION("Member is not in the institution"),
+    INSTITUTION_SELECTED_ASSESSMENTS("At least 50% of the assessments must be selected"),
+    INSTITUTION_MOST_RECENT_ASSESSMENTS("At least 20% of the selected assessments must be the most recent ones"),
+    INSTITUTION_PROFILE_NOT_FOUND("Institution Profile not found with Institution id %d"),
+
     // ActivitySuggestion
     ACTIVITY_SUGGESTION_INVALID("The activity suggestion is invalid"),
     ACTIVITY_SUGGESTION_DESCRIPTION_TOO_SHORT("An activity suggestion description must have at least 10 characters"),
     ACTIVITY_SUGGESTION_DEADLINE_TOO_SOON("The application deadline for activity suggestions must be at least 7 days after the creation date"),
     ACTIVITY_SUGGESTION_ALREADY_MADE_BY_VOLUNTEER("Activity suggestion already made by volunteer"),
-
     VOLUNTEER_NOT_FOUND("Volunteer not found."),
     ;
 

@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.ParticipationService;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteerprofile.domain.VolunteerProfile;
 
 import java.time.LocalDateTime;
 
@@ -23,12 +24,15 @@ public class Participation {
     private String volunteerReview;
     private String memberReview;
 
-
-
     @ManyToOne
     private Activity activity;
     @ManyToOne
     private Volunteer volunteer;
+
+    
+    @ManyToOne
+    @JoinColumn(name = "volunteer_profile_id")
+    private VolunteerProfile volunteerProfile;
 
     public Participation() {}
 
@@ -128,6 +132,11 @@ public class Participation {
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
         this.volunteer.addParticipation(this);
+    }
+
+    public void setVolunteerProfile(VolunteerProfile volunteerProfile) {
+        this.volunteerProfile = volunteerProfile;
+        this.volunteerProfile.addSelectedParticipation(this);
     }
 
     private void verifyInvariants() {
