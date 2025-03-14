@@ -85,6 +85,7 @@ class SpockTest extends Specification {
     public static final LocalDateTime IN_EIGHT_DAYS = DateHandler.now().plusDays(8)
     public static final LocalDateTime IN_NINE_DAYS = DateHandler.now().plusDays(9)
     public static final LocalDateTime IN_TEN_DAYS = DateHandler.now().plusDays(10)
+    public static final LocalDateTime IN_ELEVEN_DAYS = DateHandler.now().plusDays(11)
 
     // institution
 
@@ -413,6 +414,4 @@ class SpockTest extends Specification {
         themeRepository.deleteAll()
         volunteerProfileRepository.deleteAll()
     }
-
-
 }
