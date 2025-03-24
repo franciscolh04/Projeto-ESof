@@ -45,4 +45,12 @@ public class InstitutionProfileService {
 
         return new InstitutionProfileDto(institutionProfile);
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<InstitutionProfileDTO> getAllInstitutionProfiles() {
+        return institutionProfileRepository.findAll().stream() 
+                .map(InstitutionProfileDto::new)
+                .toList();
+    }
+
 }
