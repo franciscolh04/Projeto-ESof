@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.profile.domain.Institution
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.profile.dto.InstitutionProfileDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.profile.repository.InstitutionProfileRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
@@ -47,7 +48,7 @@ public class InstitutionProfileService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<InstitutionProfileDTO> getAllInstitutionProfiles() {
+    public List<InstitutionProfileDto> getAllInstitutionProfiles() {
         return institutionProfileRepository.findAll().stream() 
                 .map(InstitutionProfileDto::new)
                 .toList();

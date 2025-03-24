@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="table">
+    <!--<v-card class="table">
       <v-card-title>
         <h2>Volunteer Profiles</h2>
       </v-card-title>
@@ -29,7 +29,7 @@
           </v-card-title>
         </template>
       </v-data-table>
-    </v-card>
+    </v-card>-->
     <!-- Institution Profiles -->
     <v-card class="table">
       <v-card-title>
@@ -44,7 +44,20 @@
         :mobile-breakpoint="0"
       >
         <template v-slot:item.institution.creationDate="{ item }">
-          {{ ISOtoString(item.institution.creationDate) }}
+         {{ ISOtoString(item.institution.creationDate) }} 
+        </template>
+        <template v-slot:[`item.action`]="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              @click="showInstitutionProfile(item)"
+              v-on="on"
+              >fas fa-eye
+            </v-icon>
+          </template>
+          <span>Show Profile</span>
+        </v-tooltip>
         </template>
         <template v-slot:top>
           <v-card-title>
@@ -64,13 +77,15 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
+import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
-  methods: { ISOtoString }
+  methods: { ISOtoString },
 })
 export default class ProfilesListView extends Vue {
   //volunteerProfiles: VolunteerProfile[] = []; // TODO: this is the object that will be used to fill in the table
-  //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  institutionProfiles: InstitutionProfile[] = [];
 
   search: string = '';
 
@@ -135,11 +150,20 @@ export default class ProfilesListView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      this.institutionProfiles = await RemoteServices.getInstitutionProfiles();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async showInstitutionProfile(institutionProfile: InstitutionProfile) {
+    await this.$store.dispatch('setInstitution', institutionProfile);
+    await this.$router.push({ name: 'institution-profile' });
+  }
+
+  ISOtoString(date: string): string {
+    return ISOtoString(date);
   }
 }
 </script>

@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.profile.dto.InstitutionPro
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @RestController()
@@ -25,7 +26,7 @@ public class InstitutionProfileController {
         return institutionProfileService.getInstitutionProfile(institutionId);
     }
 
-    @GetMapping("/profiles")
+    @GetMapping("/profiles/view")
     public List<InstitutionProfileDto> getAllInstitutionProfiles(Principal principal) {
         return institutionProfileService.getAllInstitutionProfiles();
     }
