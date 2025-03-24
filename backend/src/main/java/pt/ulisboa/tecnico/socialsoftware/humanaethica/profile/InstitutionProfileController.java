@@ -25,10 +25,16 @@ public class InstitutionProfileController {
         return institutionProfileService.getInstitutionProfile(institutionId);
     }
 
+    @GetMapping("/profiles")
+    public List<InstitutionProfileDto> getAllInstitutionProfiles(Principal principal) {
+        return institutionProfileService.getAllInstitutionProfiles();
+    }
+
     @PostMapping("/profile/institution")
     @PreAuthorize("(hasRole('ROLE_MEMBER'))")
     public InstitutionProfileDto createInstitutionProfile(Principal principal, @Valid @RequestBody InstitutionProfileDto institutionProfileDto) {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return institutionProfileService.createInstitutionProfile(userService.getInstitution(userId).getId(), institutionProfileDto);
     }
+
 }
