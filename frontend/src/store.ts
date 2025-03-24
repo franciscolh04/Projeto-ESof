@@ -148,6 +148,9 @@ export default new Vuex.Store({
     },
     async setActivity({ commit }, activity: Activity) {
       commit('setActivity', activity);
+    },
+    async setInstitutionProfile({ commit }, institutionProfile: InstitutionProfile) {
+      commit('setInstitutionProfile', institutionProfile);
     }
   },
   getters: {
