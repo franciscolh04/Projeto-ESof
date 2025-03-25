@@ -38,7 +38,7 @@ public class ActivitySuggestionService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<ActivitySuggestionsDto> getActivitySuggestionsByVolunteer(Integer userId) {
+    public List<ActivitySuggestionDto> getActivitySuggestionsByVolunteer(Integer userId) {
         if (userId == null) throw new HEException(USER_NOT_FOUND);
         Volunteer volunteer = (Volunteer) userRepository.findById(userId).orElseThrow(() -> new HEException(USER_NOT_FOUND));
 
