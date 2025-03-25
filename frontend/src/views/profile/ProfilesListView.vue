@@ -158,8 +158,8 @@ export default class ProfilesListView extends Vue {
   }
 
   async showInstitutionProfile(institutionProfile: InstitutionProfile) {
-    await this.$store.dispatch('setInstitution', institutionProfile);
-    await this.$router.push({ name: 'institution-profile' });
+    await this.$store.dispatch('setInstitutionProfile', institutionProfile);
+    await this.$router.push({ name: 'institution-profile', params: { id: String(institutionProfile.institution.id) } });
   }
 
   ISOtoString(date: string): string {
