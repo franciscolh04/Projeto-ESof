@@ -15,6 +15,7 @@ import Enrollment from '@/models/enrollment/Enrollment';
 import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
+import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -813,15 +814,28 @@ export default class RemoteServices {
 
   static async getActivitySuggestionsByInstitution(institutionId: number): Promise<ActivitySuggestion[]> {
     return httpClient
-        .get(`/activitySuggestions/institution/${institutionId}`)
-        .then((response) => {
-          return response.data.map((activitySuggestion: any) => {
-            return new ActivitySuggestion(activitySuggestion);
-          });
-        })
-        .catch(async (error) => {
-          throw Error(await this.errorMessage(error));
+      .get(`/activitySuggestions/institution/${institutionId}`)
+      .then((response) => {
+        return response.data.map((activitySuggestion: any) => {
+          return new ActivitySuggestion(activitySuggestion);
         });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getActivitySuggestionsByVolunteer(userId: number): Promise<ActivitySuggestion[]> {
+    return httpClient
+      .get(`/activitySuggestions/volunteer/${userId}`)
+      .then((response) => {
+        return response.data.map((actSuggestion: any) => {
+          return new ActivitySuggestion(actSuggestion);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   // Error
