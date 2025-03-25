@@ -825,6 +825,17 @@ export default class RemoteServices {
       });
   }
 
+  static async getInstitutionProfile(institutionId: number): Promise<InstitutionProfile> {
+    return httpClient
+      .get(`/profile/institution/${institutionId}`)
+      .then((response) => {
+        return new InstitutionProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   // Error
 
   static async errorMessage(error: any): Promise<string> {
