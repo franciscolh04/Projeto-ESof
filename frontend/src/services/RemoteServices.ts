@@ -809,6 +809,21 @@ export default class RemoteServices {
       });
   }
 
+  // Activity Suggestion Controller
+
+  static async getActivitySuggestionsByInstitution(institutionId: number): Promise<ActivitySuggestion[]> {
+    return httpClient
+        .get(`/activitySuggestions/institution/${institutionId}`)
+        .then((response) => {
+          return response.data.map((activitySuggestion: any) => {
+            return new ActivitySuggestion(activitySuggestion);
+          });
+        })
+        .catch(async (error) => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
   // Error
 
   static async errorMessage(error: any): Promise<string> {
