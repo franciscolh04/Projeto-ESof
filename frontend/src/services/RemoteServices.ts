@@ -829,8 +829,8 @@ export default class RemoteServices {
     return httpClient
       .get(`/activitySuggestions/volunteer/${userId}`)
       .then((response) => {
-        return response.data.map((actSuggestion: any) => {
-          return new ActivitySuggestion(actSuggestion);
+        return response.data.map((activitySuggestion: any) => {
+          return new ActivitySuggestion(activitySuggestion);
         });
       })
       .catch(async (error) => {
