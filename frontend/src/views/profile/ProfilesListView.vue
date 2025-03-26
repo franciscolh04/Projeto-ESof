@@ -161,10 +161,6 @@ export default class ProfilesListView extends Vue {
     await this.$store.dispatch('setInstitutionProfile', institutionProfile);
     await this.$router.push({ name: 'institution-profile', params: { id: String(institutionProfile.institution.id) } });
   }
-
-  ISOtoString(date: string): string {
-    return ISOtoString(date);
-  }
 }
 </script>
 

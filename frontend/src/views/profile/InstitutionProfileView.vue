@@ -6,10 +6,17 @@
       <div class="text-description">
         <p> No institution profile found. Click the button below to create a new one! </p>
       </div>
-      <v-btn color="primary" @click="createInstitutionProfile">
+      <v-btn color="primary" @click="newInstitutionProfile" data-cy="newInstitutionProfile">
         Create Institution Profile
       </v-btn>
     </div>
+    <institutionProfile-dialog 
+        v-if="!hasInstitutionProfile && institutionProfileDialog"
+        v-model="institutionProfileDialog"
+        :institutionProfile="institutionProfile"
+        v-on:create-institutionProfile="onSaveInstitutionProfile"
+        v-on:close-institutionProfile-dialog="onCloseInstitutionProfileDialog"
+    />
     <div v-if="hasInstitutionProfile">
       <h1>Institution: {{ institutionProfile?.institution?.name || 'N/A' }}</h1>
       <div class="text-description">
@@ -64,16 +71,20 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
 import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
+import InstitutionProfileDialog from '@/views/profile/InstitutionProfileDialog.vue';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component({
-  methods: { ISOtoString },
   components: {
-  }
+    'institutionProfile-dialog': InstitutionProfileDialog,
+  },
+  methods: { ISOtoString },
 })
 export default class InstitutionProfileView extends Vue {
   institutionId: number = 0;
   institutionProfile: InstitutionProfile | null = null;
+
+  institutionProfileDialog: boolean = false;
 
   search: string = '';
   headers: object = [
@@ -132,8 +143,30 @@ export default class InstitutionProfileView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  createInstitutionProfile(){
-    // TO DO: open dialog
+  //newInstitutionProfile(){}
+
+  newInstitutionProfile(){
+    this.institutionProfile = new InstitutionProfile();
+    this.institutionProfileDialog = true;
+  }
+
+  onCloseInstitutionProfileDialog(){
+    this.institutionProfile = null;
+    this.institutionProfileDialog = false;
+  }
+
+  async onSaveInstitutionProfile(institutionProfile: InstitutionProfile){
+    await this.$store.dispatch('loading');
+    try {
+      // Recarrega o perfil da instituição da API
+      const updatedProfile = await RemoteServices.getInstitutionProfile(this.institutionId);
+      this.institutionProfile = updatedProfile;
+      this.$store.commit('setInstitutionProfile', updatedProfile);
+      this.institutionProfileDialog = false;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
   }
 
 }
