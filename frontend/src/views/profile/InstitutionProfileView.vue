@@ -143,8 +143,6 @@ export default class InstitutionProfileView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  //newInstitutionProfile(){}
-
   newInstitutionProfile(){
     this.institutionProfile = new InstitutionProfile();
     this.institutionProfileDialog = true;
@@ -158,10 +156,7 @@ export default class InstitutionProfileView extends Vue {
   async onSaveInstitutionProfile(institutionProfile: InstitutionProfile){
     await this.$store.dispatch('loading');
     try {
-      // Recarrega o perfil da instituição da API
-      const updatedProfile = await RemoteServices.getInstitutionProfile(this.institutionId);
-      this.institutionProfile = updatedProfile;
-      this.$store.commit('setInstitutionProfile', updatedProfile);
+      this.institutionProfile = institutionProfile;
       this.institutionProfileDialog = false;
     } catch (error) {
       await this.$store.dispatch('error', error);
