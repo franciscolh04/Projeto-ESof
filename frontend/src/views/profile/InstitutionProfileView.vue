@@ -14,6 +14,7 @@
         v-if="!hasInstitutionProfile && institutionProfileDialog"
         v-model="institutionProfileDialog"
         :institutionProfile="institutionProfile"
+        :assessments="assessments"
         v-on:create-institutionProfile="onSaveInstitutionProfile"
         v-on:close-institutionProfile-dialog="onCloseInstitutionProfileDialog"
     />
@@ -25,7 +26,7 @@
       <div class="stats-container">
         <div class="items" v-for="(stat, index) in stats" :key="index">
           <div class="icon-wrapper">
-            <span>{{ stat.value }}</span>
+            <span>{{ stat.value % 1 === 0 ? stat.value : Number(stat.value).toFixed(2) }}</span>
           </div>
           <div class="project-name">
             <p>{{ stat.label }}</p>
@@ -40,6 +41,7 @@
             <v-data-table
               :headers="headers"
               :search="search"
+              :items="institutionProfile?.selectedAssessments"
               disable-pagination
               :hide-default-footer="true"
               :mobile-breakpoint="0"
@@ -73,6 +75,7 @@ import { ISOtoString } from "../../services/ConvertDateService";
 import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
 import InstitutionProfileDialog from '@/views/profile/InstitutionProfileDialog.vue';
 import RemoteServices from '@/services/RemoteServices';
+import Assessment from '@/models/assessment/Assessment';
 
 @Component({
   components: {
@@ -83,6 +86,7 @@ import RemoteServices from '@/services/RemoteServices';
 export default class InstitutionProfileView extends Vue {
   institutionId: number = 0;
   institutionProfile: InstitutionProfile | null = null;
+  assessments: Assessment[] = [];
 
   institutionProfileDialog: boolean = false;
 
@@ -134,8 +138,11 @@ export default class InstitutionProfileView extends Vue {
       if (!this.hasInstitutionProfile) {
         institution = await RemoteServices.getInstitutionProfile(this.institutionId);
         this.institutionProfile = institution?.id ? institution : null;
+        if(this.institutionProfile == null){
+          this.assessments = await RemoteServices.getInstitutionAssessments(this.institutionId);
+        }
       }
-      
+
     } catch (error) {
       await this.$store.dispatch('error', error);
       this.institutionProfile = null;

@@ -10,13 +10,49 @@
             <v-col cols="12">
               <v-text-field
                 label="*Short description"
-                :rules="shortDescriptionRules"
+                :rules="[(v) => !!v || 'Short description is required']"
                 required
                 v-model="newInstitutionProfile.shortDescription"
                 data-cy="shortDescription"
-                @input="validateForm"
               ></v-text-field>
             </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+            <div>
+              <h2>Selected Assessments</h2>
+              <div>
+                <v-card class="table">
+                  <v-data-table
+                    :headers="headers"
+                    :search="search"
+                    v-model="newInstitutionProfile.selectedAssessments"
+                    :items="assessments"
+                    disable-pagination
+                    show-select
+                    :hide-default-footer="true"
+                    :mobile-breakpoint="0"
+                    data-cy="institutionAssessmentsTable"
+                  >
+                    <template v-slot:item.reviewDate="{ item }">
+                      {{ ISOtoString(item.reviewDate) }}
+                    </template>
+                    <template v-slot:top>
+                      <v-card-title>
+                        <v-text-field
+                          v-model="search"
+                          append-icon="search"
+                          label="Search"
+                          class="mx-2"
+                        />
+                        <v-spacer />
+                      </v-card-title>
+                    </template>
+                  </v-data-table>
+                </v-card>
+              </div>
+            </div>
+          </v-col>
           </v-row>
         </v-form>
       </v-card-text>
@@ -30,7 +66,7 @@
           Close
         </v-btn>
         <v-btn
-          v-if="isFormValid"
+          v-if="canSave"
           color="blue-darken-1"
           variant="text"
           @click="createInstitutionProfile"
@@ -48,18 +84,41 @@
 import { Vue, Component, Prop, Model } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
+import Assessment from '@/models/assessment/Assessment';
+import { ISOtoString } from "../../services/ConvertDateService";
 
-@Component
+@Component({
+  methods: { ISOtoString },
+})
 export default class InstitutionProfileDialog extends Vue {
   @Model('dialog', { type: Boolean, required: true }) readonly dialog!: boolean;
   @Prop({ type: InstitutionProfile, required: true }) readonly institutionProfile!: InstitutionProfile;
+  @Prop({ type: Array, required: true }) readonly assessments!: Assessment[];
 
   newInstitutionProfile: InstitutionProfile = new InstitutionProfile();
   isFormValid = false;
+  cypressCondition: boolean = false;
 
-  shortDescriptionRules = [
-    (v: string) => !!v?.trim() || 'Short description is required',
-    (v: string) => (v?.trim().length >= 10) || 'Short description must be 10 or more characters'
+  search: string = '';
+  headers: object = [
+    {
+      text: 'Volunteer Name',
+      value: 'volunteerName',
+      align: 'left',
+      width: '30%',
+    },
+    {
+      text: 'Review',
+      value: 'review',
+      align: 'left',
+      width: '30%',
+    },
+    {
+      text: 'Review Date',
+      value: 'reviewDate',
+      align: 'left',
+      width: '40%',
+    }
   ];
 
   created() {
@@ -67,11 +126,11 @@ export default class InstitutionProfileDialog extends Vue {
     this.newInstitutionProfile.shortDescription = "";
   }
 
-  async validateForm() {
-    if (this.$refs.form) {
-      this.isFormValid = await (this.$refs.form as any).validate();
-    }
-    return this.isFormValid;
+  get canSave(): boolean {
+    return (
+      this.cypressCondition ||
+      (!!this.newInstitutionProfile.shortDescription)
+    );
   }
 
   closeDialog() {
@@ -79,8 +138,9 @@ export default class InstitutionProfileDialog extends Vue {
   }
 
   async createInstitutionProfile() {
-    const isValid = await this.validateForm();
-    if (!isValid) return;
+
+    if (!(this.$refs.form as Vue & { validate: () => boolean }).validate())
+      return;
 
     try {
       // Ensure we trim the description before sending
