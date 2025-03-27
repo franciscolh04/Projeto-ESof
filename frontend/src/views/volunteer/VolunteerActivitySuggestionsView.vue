@@ -1,35 +1,46 @@
 <template>
   <v-card class="table">
     <v-data-table
-        :headers="headers"
-        :items="activitySuggestions"
-        :search="search"
-        disable-pagination
-        :hide-default-footer="true"
-        :mobile-breakpoint="0"
+      :headers="headers"
+      :items="activitySuggestions"
+      :search="search"
+      disable-pagination
+      :hide-default-footer="true"
+      :mobile-breakpoint="0"
     >
       <template v-slot:top>
         <v-card-title>
           <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              class="mx-2"
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            class="mx-2"
           />
           <v-spacer />
-          <v-btn color="primary" dark @click="newActivitySuggestion" data-cy="newActivitySuggestion"
+          <v-btn
+            color="primary"
+            dark
+            @click="newActivitySuggestion"
+            data-cy="newActivitySuggestion"
             >New Activity Suggestion</v-btn
           >
         </v-card-title>
       </template>
+      <template v-slot:[`item.institution`]="{ item }">
+        <span v-for="institution in institutions" :key="institution.id">
+          <span v-if="institution.id === item.institutionId">
+            {{ institution.name }}
+          </span>
+        </span>
+      </template>
     </v-data-table>
     <activitySuggestion-dialog
-        v-if="currentActivitySuggestion && newActivitySuggestionDialog"
-        v-model="newActivitySuggestionDialog"
-        :activitySuggestion="currentActivitySuggestion"
-        :institutions="institutions"
-        v-on:save-activitySuggestion="onSaveActivitySuggestion"
-        v-on:close-activitySuggestion-dialog="onCloseActivitySuggestionDialog"
+      v-if="currentActivitySuggestion && newActivitySuggestionDialog"
+      v-model="newActivitySuggestionDialog"
+      :activitySuggestion="currentActivitySuggestion"
+      :institutions="institutions"
+      v-on:save-activitySuggestion="onSaveActivitySuggestion"
+      v-on:close-activitySuggestion-dialog="onCloseActivitySuggestionDialog"
     />
   </v-card>
 </template>
@@ -38,10 +49,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
 import ActivitySuggestionDialog from '@/views/volunteer/ActivitySuggestionsDialog.vue';
-import RemoteServices
-  from "@/services/RemoteServices";
-import Institution
-  from "@/models/institution/Institution";
+import RemoteServices from '@/services/RemoteServices';
+import Institution from '@/models/institution/Institution';
 
 @Component({
   components: {
@@ -50,7 +59,7 @@ import Institution
 })
 export default class VolunteerActivitySuggestionsView extends Vue {
   activitySuggestions: ActivitySuggestion[] = [];
-  institutions: Institution[] = []
+  institutions: Institution[] = [];
   search: string = '';
 
   currentActivitySuggestion: ActivitySuggestion | null = null;
@@ -61,19 +70,19 @@ export default class VolunteerActivitySuggestionsView extends Vue {
       text: 'Name',
       value: 'name',
       align: 'left',
-      width: '10%',
+      width: '15%',
     },
     {
       text: 'Institution',
-      value: 'name',
+      value: 'institution',
       align: 'left',
-      width: '10%',
+      width: '12%',
     },
     {
       text: 'Description',
       value: 'description',
       align: 'left',
-      width: '40%',
+      width: '30%',
     },
     {
       text: 'Region',
@@ -91,25 +100,25 @@ export default class VolunteerActivitySuggestionsView extends Vue {
       text: 'Start Date',
       value: 'formattedStartingDate',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'End Date',
       value: 'formattedEndingDate',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'Application Deadline',
       value: 'formattedApplicationDeadline',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'Creation Date',
       value: 'creationDate',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'State',
@@ -123,7 +132,8 @@ export default class VolunteerActivitySuggestionsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       let userId = this.$store.getters.getUser.id;
-      this.activitySuggestions = await RemoteServices.getActivitySuggestionsByVolunteer(userId);
+      this.activitySuggestions =
+        await RemoteServices.getActivitySuggestionsByVolunteer(userId);
       this.institutions = await RemoteServices.getInstitutions();
     } catch (error) {
       await this.$store.dispatch('error', error);
