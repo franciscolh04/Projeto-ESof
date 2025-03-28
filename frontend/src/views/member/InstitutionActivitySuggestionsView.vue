@@ -21,6 +21,22 @@
           />
         </v-card-title>
       </template>
+      <template v-slot:item.actions="{ item }">
+        <v-chip
+          class="mr-2 action-button"
+          v-if="item.state === 'IN_REVIEW' || item.state === 'REJECTED'"
+          @click="approveActivitySuggestion(item)"
+        >
+          <v-icon left color="green">mdi-thumb-up</v-icon>
+        </v-chip>
+        <v-chip
+          class="mr-2 action-button"
+          v-if="item.state === 'IN_REVIEW' || item.state === 'APPROVED'"
+          @click="rejectActivitySuggestion(item)"
+        >
+          <v-icon left color="red">mdi-thumb-down</v-icon>
+        </v-chip>
+      </template>
     </v-data-table>
   </v-card>
 </template>
@@ -28,13 +44,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Institution from '@/models/institution/Institution';
+import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
-  components: {
-  },
+  components: {},
 })
-export default class VolunteerActivitySuggestionsView extends Vue {
-  //activitySuggestions: ActivitySuggestion[] = []; // TODO: this is the object that will be used to fill in the table
+export default class InstitutionActivitySuggestionsView extends Vue {
+  activitySuggestions: ActivitySuggestion[] = [];
   institution: Institution = new Institution();
   search: string = '';
   headers: object = [
@@ -97,13 +114,27 @@ export default class VolunteerActivitySuggestionsView extends Vue {
       value: 'state',
       align: 'left',
       width: '5%',
-    }
+    },
+    {
+      text: 'Actions',
+      value: 'actions',
+      align: 'left',
+      sortable: false,
+      width: '5%',
+    },
   ];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      let userId = this.$store.getters.getUser.id;
+      this.institution = await RemoteServices.getInstitution(userId);
+      if (this.institution.id !== null) {
+        this.activitySuggestions =
+          await RemoteServices.getActivitySuggestionsByInstitution(
+            this.institution.id,
+          );
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -112,6 +143,47 @@ export default class VolunteerActivitySuggestionsView extends Vue {
 
   institutionName() {
     return this.institution.name;
+  }
+
+  async approveActivitySuggestion(activitySuggestion: ActivitySuggestion) {
+    if (
+      activitySuggestion.id !== null &&
+      activitySuggestion.institutionId !== null
+    ) {
+      try {
+        const updatedActivitySuggestion =
+          await RemoteServices.approveActivitySuggestion(
+            activitySuggestion.id,
+            activitySuggestion.institutionId,
+          );
+        this.activitySuggestions = this.activitySuggestions.map((a) =>
+          a.id === updatedActivitySuggestion.id ? updatedActivitySuggestion : a,
+        );
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
+  async rejectActivitySuggestion(activitySuggestion: ActivitySuggestion) {
+    if (
+      activitySuggestion.id !== null &&
+      activitySuggestion.institutionId !== null
+    ) {
+      try {
+        const updatedActivitySuggestion =
+          await RemoteServices.rejectActivitySuggestion(
+            activitySuggestion.id,
+            activitySuggestion.institutionId,
+          );
+
+        this.activitySuggestions = this.activitySuggestions.map((a) =>
+          a.id === updatedActivitySuggestion.id ? updatedActivitySuggestion : a,
+        );
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
   }
 }
 </script>
