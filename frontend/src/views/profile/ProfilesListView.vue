@@ -42,6 +42,7 @@
         disable-pagination
         :hide-default-footer="true"
         :mobile-breakpoint="0"
+        data-cy="institutionProfilesTable"
       >
         <template v-slot:item.institution.creationDate="{ item }">
          {{ ISOtoString(item.institution.creationDate) }} 
