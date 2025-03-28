@@ -838,7 +838,7 @@ export default class RemoteServices {
         });
   }
 
-  static async registerActivitySuggestion(institutionId: number ,activitySuggestion: ActivitySuggestion): Promise<ActivitySuggestion> {
+  static async registerActivitySuggestion(institutionId: number, activitySuggestion: ActivitySuggestion): Promise<ActivitySuggestion> {
     return httpClient
         .post(`/activitySuggestions/institution/${institutionId}`, activitySuggestion)
         .then((response) => {
@@ -847,6 +847,28 @@ export default class RemoteServices {
         .catch(async (error) => {
           throw Error(await this.errorMessage(error));
         });
+  }
+
+  static async approveActivitySuggestion(activitySuggestionId: number, institutionId: number){
+      return httpClient
+      .put(`/activitySuggestions/institution/${institutionId}/${activitySuggestionId}/approve`)
+      .then((response) => {
+          return new ActivitySuggestion(response.data);
+      })
+      .catch(async (error) => {
+          throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rejectActivitySuggestion(activitySuggestionId: number, institutionId: number){
+      return httpClient
+          .put(`/activitySuggestions/institution/${institutionId}/${activitySuggestionId}/reject`)
+          .then((response) => {
+              return new ActivitySuggestion(response.data);
+          })
+          .catch(async (error) => {
+              throw Error(await this.errorMessage(error));
+          });
   }
 
   // Error
