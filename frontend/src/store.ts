@@ -5,6 +5,7 @@ import TokenAuthUser from '@/models/user/TokenAuthUser';
 import AuthUser from '@/models/user/AuthUser';
 import RegisterUser from '@/models/user/RegisterUser';
 import Activity from '@/models/activity/Activity';
+import VolunteerProfile from '@/models/volunteerProfile/VolunteerProfile';
 
 interface State {
   token: string;
@@ -15,6 +16,7 @@ interface State {
   notificationMessageList: string[];
   loading: boolean;
   activity: Activity | null;
+  volunteerProfile: VolunteerProfile | null;
 }
 
 const state: State = {
@@ -25,7 +27,8 @@ const state: State = {
   notification: false,
   notificationMessageList: [],
   loading: false,
-  activity: null
+  activity: null,
+  volunteerProfile: null
 };
 
 Vue.use(Vuex);
@@ -47,6 +50,10 @@ export default new Vuex.Store({
       if (activity) {
         state.activity = JSON.parse(activity);
       }
+      const volunteerProfile = localStorage.getItem('volunteerProfile');
+      if (volunteerProfile) {
+        state.volunteerProfile = JSON.parse(volunteerProfile);
+      }
     },
     login(state, authResponse: TokenAuthUser) {
       localStorage.setItem('token', authResponse.token);
@@ -61,6 +68,8 @@ export default new Vuex.Store({
       state.user = null;
       localStorage.setItem('activity', '');
       state.activity = null;
+      localStorage.setItem('volunteerProfile', '');
+      state.volunteerProfile = null;
     },
     error(state, errorMessage: string) {
       state.error = true;
@@ -87,6 +96,10 @@ export default new Vuex.Store({
     setActivity(state: State, activity: Activity) {
       localStorage.setItem('activity', JSON.stringify(activity));
       state.activity = activity;
+    },
+    setVolunteerProfile(state: State, volunteerProfile: VolunteerProfile) {
+      localStorage.setItem('volunteerProfile', JSON.stringify(volunteerProfile));
+      state.volunteerProfile = volunteerProfile;
     }
   },
   actions: {
@@ -110,8 +123,8 @@ export default new Vuex.Store({
     },
     async userLogin({ commit }, user: RegisterUser) {
       const authResponse = await RemoteServices.userLogin(
-        user.username,
-        user.password,
+          user.username,
+          user.password,
       );
       commit('login', authResponse);
     },
@@ -135,6 +148,9 @@ export default new Vuex.Store({
     },
     async setActivity({ commit }, activity: Activity) {
       commit('setActivity', activity);
+    },
+    async setVolunteerProfile({ commit }, volunteerProfile: VolunteerProfile) {
+      commit('setVolunteerProfile', volunteerProfile);
     }
   },
   getters: {
@@ -146,12 +162,12 @@ export default new Vuex.Store({
     },
     isMember(state): boolean {
       return (
-        !!state.token && state.user !== null && state.user.role == 'MEMBER'
+          !!state.token && state.user !== null && state.user.role == 'MEMBER'
       );
     },
     isVolunteer(state): boolean {
       return (
-        !!state.token && state.user !== null && state.user.role == 'VOLUNTEER'
+          !!state.token && state.user !== null && state.user.role == 'VOLUNTEER'
       );
     },
     getToken(state): string {
@@ -177,6 +193,9 @@ export default new Vuex.Store({
     },
     getActivity(state: State): Activity | null {
       return state.activity;
+    },
+    getVolunteerProfile(state: State): VolunteerProfile | null {
+      return state.volunteerProfile;
     }
   },
 });
