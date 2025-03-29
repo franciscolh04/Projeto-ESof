@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Volunteer Profiles -->
     <v-card class="table">
       <v-card-title>
         <h2>Volunteer Profiles</h2>
@@ -17,6 +18,19 @@
         </template>
         <template v-slot:item.volunteer.lastAccess="{ item }">
           {{ ISOtoString(item.volunteer.lastAccess) }}
+        </template>
+        <template v-slot:[`item.action`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                class="mr-2 action-button"
+                @click="showVolunteerProfile(item)"
+                v-on="on"
+                >fas fa-eye
+              </v-icon>
+            </template>
+            <span>Show Volunteer Profile</span>
+          </v-tooltip>
         </template>
         <template v-slot:top>
           <v-card-title>
@@ -64,12 +78,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
+import VolunteerProfile from '@/models/volunteerProfile/VolunteerProfile';
+import RemoteServices from "@/services/RemoteServices";
 
 @Component({
-  methods: { ISOtoString }
+  methods: { ISOtoString },
 })
 export default class ProfilesListView extends Vue {
-  //volunteerProfiles: VolunteerProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  volunteerProfiles: VolunteerProfile[] = [];
   //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
 
   search: string = '';
@@ -135,11 +151,16 @@ export default class ProfilesListView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      this.volunteerProfiles = await RemoteServices.getVolunteerProfiles();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async showVolunteerProfile(volunteerProfile: VolunteerProfile) {
+    await this.$store.dispatch('setVolunteerProfile', volunteerProfile);
+    await this.$router.push({ name: 'volunteer-profile', params: { id: String(volunteerProfile.volunteer.id) } });
   }
 }
 </script>

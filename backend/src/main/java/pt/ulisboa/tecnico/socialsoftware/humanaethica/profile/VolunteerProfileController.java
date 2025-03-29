@@ -22,7 +22,7 @@ public class VolunteerProfileController {
         return volunteerProfileService.getVolunteerProfile(volunteerId);
     }
 
-    @GetMapping("/profiles")
+    @GetMapping("/profiles/view")
     public List<VolunteerProfileDto> getAllVolunteerProfiles() {
         return volunteerProfileService.getAllVolunteerProfiles();
     }
