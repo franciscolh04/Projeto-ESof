@@ -827,7 +827,7 @@ export default class RemoteServices {
 
   static async getVolunteerProfile(volunteerId: number): Promise<VolunteerProfile> {
     return httpClient
-      .get(/profile/volunteer/${volunteerId})
+      .get('/profile/volunteer/${volunteerId}')
       .then((response) => {
         return new VolunteerProfile(response.data);
       })
