@@ -7,6 +7,7 @@
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
+      data-cy="activitySuggestionsTable"
     >
       <template v-slot:item.institutionName="{ item }">
         {{ institutionName() }}
@@ -26,6 +27,7 @@
           class="mr-2 action-button"
           v-if="item.state === 'IN_REVIEW' || item.state === 'REJECTED'"
           @click="approveActivitySuggestion(item)"
+          data-cy="approveActivitySuggestionButton"
         >
           <v-icon left color="green">mdi-thumb-up</v-icon>
         </v-chip>
@@ -33,6 +35,7 @@
           class="mr-2 action-button"
           v-if="item.state === 'IN_REVIEW' || item.state === 'APPROVED'"
           @click="rejectActivitySuggestion(item)"
+          data-cy="rejectActivitySuggestionButton"
         >
           <v-icon left color="red">mdi-thumb-down</v-icon>
         </v-chip>

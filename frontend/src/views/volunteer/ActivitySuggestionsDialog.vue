@@ -24,6 +24,7 @@
                   item-text="name"
                   item-value="id"
                   required
+                  data-cy="institutionInput"
               />
             </v-col>
             <v-col cols="12">
@@ -63,6 +64,7 @@
                   v-model="editActivitySuggestion.applicationDeadline"
                   format="YYYY-MM-DDTHH:mm:ssZ"
                   label="*Application Deadline"
+                  data-cy="applicationDeadlineInput"
               ></VueCtkDateTimePicker>
             </v-col>
             <v-col>
@@ -71,6 +73,7 @@
                   v-model="editActivitySuggestion.startingDate"
                   format="YYYY-MM-DDTHH:mm:ssZ"
                   label="*Starting Date"
+                  data-cy="startingDateInput"
               ></VueCtkDateTimePicker>
             </v-col>
             <v-col>
@@ -79,6 +82,7 @@
                   v-model="editActivitySuggestion.endingDate"
                   format="YYYY-MM-DDTHH:mm:ssZ"
                   label="*Ending Date"
+                  data-cy="endingDateInput"
               ></VueCtkDateTimePicker>
             </v-col>
           </v-row>
