@@ -1,21 +1,28 @@
 <template>
   <div class="container">
-    <!-- TODO: Add creation button here (only if there is no profile) -->
-    <div>
-      <h1>Volunteer: SHOW VOLUNTEER NAME HERE</h1>
+    <div v-if="!hasVolunteerProfile">
+      <h1>Volunteer Profile</h1>
       <div class="text-description">
-        <p><strong>Short Bio: </strong> SHOW SHORT BIO HERE</p>
+        <p>No volunteer profile found. Click the button below to create a new one!</p>
+      </div>
+      <v-btn color="primary" @click="newVolunteerProfile">
+        Create My Profile
+      </v-btn>
+    </div>
+    <div v-if="hasVolunteerProfile">
+      <h1>Volunteer: {{ volunteerProfile?.volunteer?.name || 'N/A' }}</h1>
+      <div class="text-description">
+        <p><strong>Short Bio: </strong>{{ volunteerProfile?.shortBio || 'N/A' }}</p>
       </div>
       <div class="stats-container">
-        <div class="items">
-          <div ref="volunteerId" class="icon-wrapper">
-            <span>42</span>
+        <div class="items" v-for="(data, idx) in volunteerData" :key="idx">
+          <div class="icon-wrapper">
+            <span>{{ data.value }}</span>
           </div>
           <div class="project-name">
-            <p>Total Enrollments</p>
+            <p>{{ data.label }}</p>
           </div>
         </div>
-        <!-- TODO: Change 42 above and add other fields here -->
       </div>
 
       <div>
@@ -62,6 +69,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from "@/services/RemoteServices";
 import Participation from "@/models/participation/Participation";
 import Activity from "@/models/activity/Activity";
+import VolunteerProfile from "@/models/volunteerProfile/VolunteerProfile";
 
 @Component({
   components: {
@@ -69,6 +77,7 @@ import Activity from "@/models/activity/Activity";
 })
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
+  volunteerProfile: VolunteerProfile | null = null;
 
   activities: Activity[] = [];
 
@@ -100,16 +109,35 @@ export default class VolunteerProfileView extends Vue {
     }
   ];
 
-  async created() {
-    await this.$store.dispatch('loading');
+  get hasVolunteerProfile(): boolean {
+    return this.volunteerProfile != null && this.volunteerProfile.id != null;
+  }
 
+  get volunteerData() {
+    return [
+      {label: 'Total Enrollments', value: this.volunteerProfile?.numTotalEnrollments || 0},
+      {label: 'Total Participations', value: this.volunteerProfile?.numTotalParticipations || 0},
+      {label: 'Total Assessments', value: this.volunteerProfile?.numTotalAssessments || 0},
+      {label: 'Average Rating', value: this.volunteerProfile?.averageRating || 0},
+    ];
+  }
+
+  async created() {
+    let volunteer: VolunteerProfile;
+    this.volunteerProfile = this.$store.getters.getVolunteerProfile;
+
+    await this.$store.dispatch('loading');
     try {
       this.userId = Number(this.$route.params.id);
       this.activities = await RemoteServices.getActivities();
 
-      // TODO
+      if (this.volunteerProfile == null) {
+        volunteer = await RemoteServices.getVolunteerProfile(this.userId);
+        this.volunteerProfile = volunteer?.id ? volunteer : null;
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
+      this.volunteerProfile = null;
     }
     await this.$store.dispatch('clearLoading');
   }
@@ -137,6 +165,10 @@ export default class VolunteerProfileView extends Vue {
     const fullStars = '★'.repeat(Math.floor(rating));
     const emptyStars = '☆'.repeat(Math.floor(5 - rating));
     return `${fullStars}${emptyStars} ${rating}/5`;
+  }
+
+  newVolunteerProfile() {
+    // TO DO: open dialog
   }
 }
 </script>
