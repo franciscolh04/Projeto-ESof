@@ -52,7 +52,7 @@ export default new Vuex.Store({
       }
       const institutionProfile = localStorage.getItem('institutionProfile');
       if (institutionProfile) {
-        state.activity = JSON.parse(institutionProfile);
+        state.institutionProfile = JSON.parse(institutionProfile);
       }
     },
     login(state, authResponse: TokenAuthUser) {

@@ -26,7 +26,7 @@ public class InstitutionProfileController {
         return institutionProfileService.getInstitutionProfile(institutionId);
     }
 
-    @GetMapping("/profiles/view")
+    @GetMapping("/profiles/view/institutionProfiles")
     public List<InstitutionProfileDto> getAllInstitutionProfiles(Principal principal) {
         return institutionProfileService.getAllInstitutionProfiles();
     }

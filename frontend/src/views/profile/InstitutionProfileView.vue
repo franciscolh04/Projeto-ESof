@@ -135,7 +135,7 @@ export default class InstitutionProfileView extends Vue {
     try {
       this.institutionId = Number(this.$route.params.id);
 
-      if (!this.hasInstitutionProfile) {
+      if (!this.hasInstitutionProfile || this.institutionId != this.institutionProfile?.institution?.id ) {
         institution = await RemoteServices.getInstitutionProfile(this.institutionId);
         this.institutionProfile = institution?.id ? institution : null;
         if(this.institutionProfile == null){

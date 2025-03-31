@@ -814,7 +814,7 @@ export default class RemoteServices {
 
   static async getInstitutionProfiles(): Promise<InstitutionProfile[]> {
     return httpClient
-      .get('/profiles/view')
+      .get('/profiles/view/institutionProfiles')
       .then((response) => {
         return response.data.map((profile: any) => {
           return new InstitutionProfile(profile);

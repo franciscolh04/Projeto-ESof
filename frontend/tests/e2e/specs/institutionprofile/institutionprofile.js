@@ -21,7 +21,7 @@ describe('InstitutionProfile', () => {
       // go to the create page 
       cy.intercept('GET', '/institutions/1/assessments').as('availableAccessments')
       cy.intercept('POST', '/profile/institution').as('profileInfo');
-      cy.intercept('GET', '/profiles/view').as('profilesList')
+      cy.intercept('GET', '/profiles/view/institutionProfiles').as('profilesList')
 
       cy.get('[data-cy="profiles"]').click();
       cy.get('[data-cy="member-profile"]').click();
