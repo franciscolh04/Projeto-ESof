@@ -7,7 +7,7 @@
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
-      data-cy="activitySuggestionsTable"
+      data-cy="institutionActivitySuggestionsTable"
     >
       <template v-slot:item.institutionName="{ item }">
         {{ institutionName() }}
@@ -19,6 +19,7 @@
             append-icon="search"
             label="Search"
             class="mx-2"
+            data-cy="search"
           />
         </v-card-title>
       </template>
@@ -62,7 +63,7 @@ export default class InstitutionActivitySuggestionsView extends Vue {
       text: 'Name',
       value: 'name',
       align: 'left',
-      width: '10%',
+      width: '12%',
     },
     {
       text: 'Institution',
@@ -92,25 +93,25 @@ export default class InstitutionActivitySuggestionsView extends Vue {
       text: 'Start Date',
       value: 'formattedStartingDate',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'End Date',
       value: 'formattedEndingDate',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'Application Deadline',
       value: 'formattedApplicationDeadline',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'Creation Date',
       value: 'creationDate',
       align: 'left',
-      width: '5%',
+      width: '7%',
     },
     {
       text: 'State',

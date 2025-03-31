@@ -1,42 +1,40 @@
-describe('E2E - Sugestões de Atividade', () => {
+describe('E2E - Activity Suggestions', () => {
     const NAME = 'Peddy Paper';
     const INSTITUTION = 'DEMO INSTITUTION';
     const PARTICIPANTS = '3';
-    const REGION = 'Lisboa';
-    const DESCRIPTION = 'Peddy Paper no Parque das Nações';
+    const REGION = 'Lisbon';
+    const DESCRIPTION = 'Peddy Paper in Lisbon';
 
 
     beforeEach(() => {
         cy.deleteAllButArs();
         cy.createDemoEntities();
-        //criar as duas sugestões de atividade para o voluntário, colocando-as na base de dados (ficheiro database.js)
-        //TODO: cy.createTwoDataBaseActivitySuggestions("Atividade1", "DEMO INSTITUTION", "1", "Atividade2", "DEMO INSTITUTION", "2");
+        cy.createTwoDataBaseActivitySuggestions();
     });
 
     afterEach(() => {
         cy.deleteAllButArs();
     });
 
-    it('Voluntário cria uma nova sugestão de atividade', () => {
+    it('volunteer creates a new activiy suggestion and member approves/rejects it', () => {
         cy.demoVolunteerLogin();
 
-        // Interceptar sugestões
+        // Intercept activity suggestions
         cy.intercept('GET', '/activitySuggestions/volunteer/*').as('getSuggestions');
         cy.get('[data-cy="volunteerActivitySuggestions"]').click();
         cy.wait('@getSuggestions');
 
-        // Verificar que há 2 sugestões inicialmente
-        cy.get('[data-cy="volunteerSuggestionsTable"] tbody tr')
-            //.should('have.length', 2);
-            .should('have.length', 0);
+        // Verify there's two activity suggestions in the beggining
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
+            .should('have.length', 2);
 
-        // Criar nova sugestão
+        // Create another activity suggestion
         cy.intercept('POST', '/activitySuggestions/institution/*').as('postSuggestion');
-        cy.get('[data-cy="newActivitySuggestion"]').click();
+        cy.get('[data-cy="newActivitySuggestionButton"]').click();
 
         cy.get('[data-cy="nameInput"]').type(NAME);
         cy.get('[data-cy="institutionInput"]').click();
-        // Aguarda o dropdown e clica na primeira opção
+        // Waits for dropdown and clicks on the first option
         cy.get('.v-menu__content .v-list-item')
             .first()
             .click();
@@ -44,156 +42,149 @@ describe('E2E - Sugestões de Atividade', () => {
         cy.get('[data-cy="participantsNumberInput"]').type(PARTICIPANTS);
         cy.get('[data-cy="descriptionInput"]').type(DESCRIPTION);
 
+        // Selects dates, waits for the interface to complete the steps
         cy.get('[data-cy=applicationDeadlineInput]').click();
-        cy.wait(1000);
+        cy.wait(500);
+        // go to next month
         cy.get('button.datepicker-next:visible').click();
-        cy.wait(1000);
-        cy.get('button.datepicker-day:visible').contains('20').click();
+        cy.wait(500);
+        // selects day 25
+        cy.get('button.datepicker-day:visible').contains('25').click();
 
 
         cy.get('[data-cy=startingDateInput]').click();
-        cy.wait(1000);
+        cy.wait(500);
+        // go to next month
         cy.get('button.datepicker-next:visible').click();
-        cy.wait(1000);
-        cy.get('button.datepicker-next:visible').click();
-        cy.wait(1000);
-        cy.get('button.datepicker-day:visible').contains('1').click();
+        cy.wait(500);
+        // selects day 26
+        cy.get('button.datepicker-day:visible').contains('26').click();
 
         cy.get('[data-cy=endingDateInput]').click();
-        cy.wait(1000);
+        cy.wait(500);
+        // go to next month
         cy.get('button.datepicker-next:visible').click();
-        cy.wait(1000);
-        cy.get('button.datepicker-next:visible').click();
-        cy.wait(1000);
-        cy.get('button.datepicker-day:visible').contains('2').click();
-        cy.wait(1000);
+        cy.wait(500);
+        // selects day 27
+        cy.get('button.datepicker-day:visible').contains('27').click();
 
-        cy.get('[data-cy="saveActivitySuggestion"]').click();
+        cy.get('[data-cy="saveActivitySuggestionButton"]').click();
         cy.wait('@postSuggestion');
 
-        // Verificar se há 3 sugestões
-        cy.wait(1000);
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
-            //.should('have.length', 3);
-            .should('have.length', 1)
+        // Verify if there is three activity suggestions and if the third one was correctly saved
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
+            .should('have.length', 3)
             .eq(0)
             .children()
             .should('have.length', 10)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
             .eq(0).children().eq(0).should('contain', NAME)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
             .eq(0).children().eq(1).should('contain', INSTITUTION)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
             .eq(0).children().eq(2).should('contain', DESCRIPTION)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
             .eq(0).children().eq(3).should('contain', REGION)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
             .eq(0).children().eq(4).should('contain', PARTICIPANTS)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
             .eq(0).children().eq(9).should('contain', 'IN_REVIEW');
 
         cy.logout();
-        cy.wait(1000);
+        cy.wait(500);
 
-
+        // Login as member
         cy.demoMemberLogin();
 
-        // Ir para sugestões
+        // Go to activity suggestions
         cy.intercept('GET', '/activitySuggestions/institution/*').as('getSuggestions');
         cy.get('[data-cy="institution"]').click();
         cy.get('[data-cy="activitysuggestions"]').click();
         cy.wait('@getSuggestions');
 
-        // Verificar que a primeira sugestão está em IN_REVIEW
-        cy.wait(1000);
-        cy.get('[data-cy="activitySuggestionsTable"] tbody tr')
-            .should('have.length', 1)
-            .eq(0)
+        // Verify that the new activity suggestion is IN_REVIEW
+        cy.get('[data-cy="institutionActivitySuggestionsTable"] tbody tr')
+            .should('have.length', 3)
+            .contains(NAME)
+            .parent()
             .children()
             .should('have.length', 11)
-        cy.get('[data-cy="activitySuggestionsTable"] tbody tr')
+        cy.get('[data-cy="institutionActivitySuggestionsTable"] tbody tr')
             .eq(0).children().eq(9).should('contain', 'IN_REVIEW');
 
-        // Aprovar sugestão
+        // Approve new activity suggestion
         cy.intercept('PUT', '/activitySuggestions/institution/*/*/approve').as('approveSuggestion');
-        cy.get('[data-cy="approveActivitySuggestionButton"]').click();
+        cy.get('[data-cy="institutionActivitySuggestionsTable"] tbody tr')
+            .contains(NAME)
+            .parent()
+            .find('[data-cy="approveActivitySuggestionButton"]')
+            .click();
         cy.wait('@approveSuggestion');
 
-        cy.wait(1000);
         cy.logout();
+        cy.wait(500);
 
 
-        // Verificar estado aprovado do lado do voluntário
+        // Verify if the state of the activity suggestion changed to approved in the volunteer side
         cy.demoVolunteerLogin();
-        // Interceptar sugestões
+        // Intercept activity suggestions
         cy.intercept('GET', '/activitySuggestions/volunteer/*').as('getSuggestions');
         cy.get('[data-cy="volunteerActivitySuggestions"]').click();
         cy.wait('@getSuggestions');
 
-        // Verificar se há 3 sugestões
-        cy.wait(1000);
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
-            //.should('have.length', 3);
-            .should('have.length', 1)
-            .eq(0)
-            .children()
-            .should('have.length', 10)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
-            .eq(0).children().eq(9).should('contain', 'APPROVED');
+        //  Verifies if the activity suggestion is approved
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
+            .contains(NAME)
+            .parent()
+            .children().eq(9).should('contain', 'APPROVED');
+        cy.wait(500);
 
-        cy.wait(1000);
         cy.logout();
-        cy.wait(1000);
+        cy.wait(500);
 
-        // volta a ser membro para rejeitar a sugestão
+        // Log in as member again to reject the activity suggesiton
         cy.demoMemberLogin();
 
-        // Ir para sugestões
+        // Go to activity suggestions
         cy.intercept('GET', '/activitySuggestions/institution/*').as('getSuggestions');
         cy.get('[data-cy="institution"]').click();
         cy.get('[data-cy="activitysuggestions"]').click();
         cy.wait('@getSuggestions');
 
-        // Verificar que a primeira sugestão está em APPROVED
-        cy.wait(1000);
-        cy.get('[data-cy="activitySuggestionsTable"] tbody tr')
-            .should('have.length', 1)
-            .eq(0)
-            .children()
-            .should('have.length', 11)
-        cy.get('[data-cy="activitySuggestionsTable"] tbody tr')
-            .eq(0).children().eq(9).should('contain', 'APPROVED');
+        // Verify if the activity suggestion is approved
+        cy.get('[data-cy="institutionActivitySuggestionsTable"] tbody tr')
+            .contains(NAME)
+            .parent()
+            .children().eq(9).should('contain', 'APPROVED');
 
-        // Aprovar sugestão
+        // Reject activity suggestion
         cy.intercept('PUT', '/activitySuggestions/institution/*/*/reject').as('rejectSuggestion');
-        cy.get('[data-cy="rejectActivitySuggestionButton"]').click();
+        cy.get('[data-cy="institutionActivitySuggestionsTable"] tbody tr')
+            .contains(NAME)
+            .parent()
+            .find('[data-cy="rejectActivitySuggestionButton"]')
+            .click();
         cy.wait('@rejectSuggestion');
 
-        cy.wait(1000);
         cy.logout();
+        cy.wait(500);
 
 
-        // Verificar estado aprovado do lado do voluntário
+        // Verify if the activity suggestion is rejected in the volunteer side
         cy.demoVolunteerLogin();
-        // Interceptar sugestões
+        // Intercept activity suggestions
         cy.intercept('GET', '/activitySuggestions/volunteer/*').as('getSuggestions');
         cy.get('[data-cy="volunteerActivitySuggestions"]').click();
         cy.wait('@getSuggestions');
+        
+        // Verifies if the activity suggestion is rejected
+        cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
+            .contains(NAME)
+            .parent()
+            .children().eq(9).should('contain', 'REJECTED');
 
-        // Verificar se há 3 sugestões
-        cy.wait(1000);
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
-            //.should('have.length', 3);
-            .should('have.length', 1)
-            .eq(0)
-            .children()
-            .should('have.length', 10)
-        cy.get('[data-cy="volunteerActivitySuggestions"] tbody tr')
-            .eq(0).children().eq(9).should('contain', 'REJECTED');
-
-        cy.wait(1000);
+        cy.wait(500);
         cy.logout();
-        cy.wait(1000);
 
     });
 });

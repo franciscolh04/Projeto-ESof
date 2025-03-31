@@ -10,7 +10,7 @@
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                   label="*Name"
-                  :rules="[(v) => !!v || 'Activity name is required']"
+                  :rules="[(v) => !!v || 'Name is required']"
                   required
                   v-model="editActivitySuggestion.name"
                   data-cy="nameInput"
@@ -18,7 +18,8 @@
             </v-col>
             <v-col cols="12" sm="6">
               <v-select
-                  label="Institution"
+                  label="*Institution"
+                  :rules="[(v) => !!v || 'Institution is required']"
                   v-model="editActivitySuggestion.institutionId"
                   :items="institutions"
                   item-text="name"
@@ -39,11 +40,7 @@
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                   label="*Number of Participants"
-                  :rules="[
-                  (v) =>
-                    isNumberValid(v) ||
-                    'Number of participants between 1 and 5 is required',
-                ]"
+                  :rules="[(v) => !!v || 'Number of participants is required']"
                   required
                   v-model="editActivitySuggestion.participantsNumberLimit"
                   data-cy="participantsNumberInput"
@@ -61,6 +58,7 @@
             <v-col>
               <VueCtkDateTimePicker
                   id="applicationDeadlineInput"
+                  :rules="[(v) => !!v || 'Region name is required']"
                   v-model="editActivitySuggestion.applicationDeadline"
                   format="YYYY-MM-DDTHH:mm:ssZ"
                   label="*Application Deadline"
@@ -70,6 +68,7 @@
             <v-col>
               <VueCtkDateTimePicker
                   id="startingDateInput"
+                  :rules="[(v) => !!v || 'Region name is required']"
                   v-model="editActivitySuggestion.startingDate"
                   format="YYYY-MM-DDTHH:mm:ssZ"
                   label="*Starting Date"
@@ -78,6 +77,7 @@
             </v-col>
             <v-col>
               <VueCtkDateTimePicker
+                  :rules="[(v) => !!v || 'Region name is required']"
                   id="endingDateInput"
                   v-model="editActivitySuggestion.endingDate"
                   format="YYYY-MM-DDTHH:mm:ssZ"
@@ -94,6 +94,7 @@
             color="blue-darken-1"
             variant="text"
             @click="$emit('close-activitySuggestion-dialog')"
+            data-cy="closeActivitySuggestionDialogButton"
         >
           Close
         </v-btn>
@@ -102,7 +103,7 @@
             color="blue-darken-1"
             variant="text"
             @click="newActivitySuggestion"
-            data-cy="saveActivitySuggestion"
+            data-cy="saveActivitySuggestionButton"
         >
           Save
         </v-btn>
@@ -134,12 +135,6 @@ export default class ActivitySuggestionDialog extends Vue {
 
   async created() {
     this.editActivitySuggestion = new ActivitySuggestion(this.activitySuggestion);
-  }
-
-  isNumberValid(value: any) {
-    if (!/^\d+$/.test(value)) return false;
-    const parsedValue = parseInt(value);
-    return parsedValue >= 1 && parsedValue <= 5;
   }
 
   get canSave(): boolean {

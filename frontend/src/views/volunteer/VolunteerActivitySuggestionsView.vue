@@ -7,7 +7,7 @@
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
-      data-cy="volunteerActivitySuggestions"
+      data-cy="volunteerActivitySuggestionsTable"
     >
       <template v-slot:top>
         <v-card-title>
@@ -16,13 +16,14 @@
             append-icon="search"
             label="Search"
             class="mx-2"
+            data-cy="search"
           />
           <v-spacer />
           <v-btn
             color="primary"
             dark
             @click="newActivitySuggestion"
-            data-cy="newActivitySuggestion"
+            data-cy="newActivitySuggestionButton"
             >New Activity Suggestion</v-btn
           >
         </v-card-title>
