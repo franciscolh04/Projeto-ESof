@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div>
+      <div v-if="hasAssessments">
         <h2>Selected Assessments</h2>
         <div>
           <v-card class="table">
@@ -120,6 +120,11 @@ export default class InstitutionProfileView extends Vue {
       { label: 'Total Volunteers', value: this.institutionProfile?.numVolunteers || 0 },
       { label: 'Average Rating', value: this.institutionProfile?.averageRating || 0 }
     ];
+  }
+
+  get hasAssessments(): boolean {
+    return this.institutionProfile?.selectedAssessments != null 
+              && this.institutionProfile?.selectedAssessments.length != 0;
   }
 
   get hasInstitutionProfile(): boolean {

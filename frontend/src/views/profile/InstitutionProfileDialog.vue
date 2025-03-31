@@ -143,16 +143,12 @@ export default class InstitutionProfileDialog extends Vue {
       return;
 
     try {
-      // Ensure we trim the description before sending
-      const profileToCreate = {
-        ...this.newInstitutionProfile,
-        shortDescription: this.newInstitutionProfile.shortDescription.trim()
-      };
-
-      const result = await RemoteServices.createInstitutionProfile(profileToCreate);
+      const result = await RemoteServices.createInstitutionProfile(this.newInstitutionProfile);
       this.$emit('create-institutionProfile', result);
       this.closeDialog();
+      
     } catch (error) {
+      console.log(error);
       await this.$store.dispatch('error', error);
     }
   }

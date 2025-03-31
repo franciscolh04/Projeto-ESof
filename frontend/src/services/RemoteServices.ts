@@ -844,8 +844,8 @@ export default class RemoteServices {
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
-      });
-  }
+      });
+  }
 
   // Error
 

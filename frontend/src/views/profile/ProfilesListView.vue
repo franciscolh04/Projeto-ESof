@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--<v-card class="table">
+    <v-card class="table">
       <v-card-title>
         <h2>Volunteer Profiles</h2>
       </v-card-title>
@@ -29,7 +29,7 @@
           </v-card-title>
         </template>
       </v-data-table>
-    </v-card>-->
+    </v-card>
     <!-- Institution Profiles -->
     <v-card class="table">
       <v-card-title>
