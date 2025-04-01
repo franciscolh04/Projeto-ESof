@@ -5,7 +5,7 @@
       <div class="text-description">
         <p>No volunteer profile found. Click the button below to create a new one!</p>
       </div>
-      <v-btn color="primary" @click="newVolunteerProfile">
+      <v-btn color="primary" @click="newVolunteerProfile" data-cy="newVolunteerProfile">
         Create My Profile
       </v-btn>
     </div>
@@ -47,6 +47,7 @@
               disable-pagination
               :hide-default-footer="true"
               :mobile-breakpoint="0"
+              data-cy="volunteerParticipationsTable"
             >
               <template v-slot:item.activityName="{ item }">
                 {{ activityName(item) }}

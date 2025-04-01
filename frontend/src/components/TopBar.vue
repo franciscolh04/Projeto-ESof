@@ -157,7 +157,7 @@
               <v-list-item-title>Institution Profile</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="isVolunteer" :to="`/profiles/volunteer/${this.$store.getters.getUser.id}`" data-cy="volunteer-profile">
+          <v-list-item v-if="isVolunteer" :to="`/profiles/volunteer/${this.$store.getters.getUser.id}`" @click="refreshPage" data-cy="volunteer-profile">
             <v-list-item-action>
               <v-icon>fas fa-address-card</v-icon>
             </v-list-item-action>
@@ -364,6 +364,10 @@ export default class TopBar extends Vue {
 
   get isVolunteer() {
     return this.$store.getters.isVolunteer;
+  }
+
+  refreshPage(){
+    window.location.reload();
   }
 
   async login() {

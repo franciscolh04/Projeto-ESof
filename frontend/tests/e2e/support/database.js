@@ -48,6 +48,10 @@ Cypress.Commands.add('deleteAllButArs', () => {
     credentials: credentials,
   })
   cy.task('queryDatabase', {
+    query: "DELETE FROM VOLUNTEER_PROFILE",
+    credentials: credentials,
+  });
+  cy.task('queryDatabase', {
     query: "DELETE FROM AUTH_USERS WHERE NOT (username = 'ars')",
     credentials: credentials,
   });
@@ -253,6 +257,30 @@ Cypress.Commands.add('createDatabaseInfoForVolunteerAssessments', () => {
   })
 });
 
+Cypress.Commands.add('createDatabaseInfoForVolunteerProfiles', () => {
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Enrollment is open",  tomorrow.toISOString(), tomorrow.toISOString(),
+        tomorrow.toISOString(),1, 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(1, 1, 3),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: generateUpdateColumnTable("participation", "member_review", "Participação excelente, obrigado!", 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: generateUpdateColumnTable("participation", "member_rating", 5, 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: generateUpdateColumnTable("participation", "volunteer_review", "Atividade muito bem organizada!", 1),
+    credentials: credentials,
+  })
+});
+
 function generateAuthUserTuple(id, authType, username, userId) {
   return "VALUES ('"
     + authType + "', '"
@@ -307,4 +335,8 @@ function generateParticipationTuple(id, activityId, volunteerId) {
 
 function generateAssessmentTuple(id, review, institutionId, volunteerId) {
   return "VALUES (" + id + ", '" + review + "', '2024-02-07 18:51:37.595713', '" + institutionId + "', " + volunteerId + ")";
+}
+
+function generateUpdateColumnTable(table, column, value, id) {
+  return "UPDATE " + table + " SET " + column + "='" + value + "' WHERE id=" + id;
 }

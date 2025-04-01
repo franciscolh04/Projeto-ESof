@@ -13,6 +13,7 @@
                   :rules="[(v) => !!v || 'Short bio is required']"
                   required
                   v-model="newVolunteerProfile.shortBio"
+                  data-cy="shortBio"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -31,6 +32,7 @@
                         show-select
                         :hide-default-footer="true"
                         :mobile-breakpoint="0"
+                        data-cy="volunteerParticipationsTable"
                     >
                       <template v-slot:item.activityName="{ item }">
                         {{ activityName(item) }}
@@ -81,6 +83,7 @@
             variant="text"
             @click="createVolunteerProfile"
             type="submit"
+            data-cy="saveVolunteerProfile"
         >
           Save
         </v-btn>
