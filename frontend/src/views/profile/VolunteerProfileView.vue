@@ -9,6 +9,17 @@
         Create My Profile
       </v-btn>
     </div>
+    <volunteerProfile-dialog
+      v-if="!hasVolunteerProfile && volunteerProfileDialog"
+      v-model="volunteerProfileDialog"
+      :volunteerProfile="volunteerProfile"
+      :participations="participations"
+      :activityName="activityName"
+      :institutionName="institutionName"
+      :getMemberRating="getMemberRating"
+      v-on:create-volunteerProfile="onSaveVolunteerProfile"
+      v-on:close-volunteerProfile-dialog="onCloseVolunteerProfileDialog"
+    />
     <div v-if="hasVolunteerProfile">
       <h1>Volunteer: {{ volunteerProfile?.volunteer?.name || 'N/A' }}</h1>
       <div class="text-description">
@@ -32,6 +43,7 @@
             <v-data-table
               :headers="headers"
               :search="search"
+              :items="volunteerProfile?.selectedParticipations"
               disable-pagination
               :hide-default-footer="true"
               :mobile-breakpoint="0"
@@ -70,15 +82,18 @@ import RemoteServices from "@/services/RemoteServices";
 import Participation from "@/models/participation/Participation";
 import Activity from "@/models/activity/Activity";
 import VolunteerProfile from "@/models/volunteerProfile/VolunteerProfile";
+import VolunteerProfileDialog from "@/views/profile/VolunteerProfileDialog.vue";
 
 @Component({
   components: {
-  }
+    'volunteerProfile-dialog': VolunteerProfileDialog,
+  },
 })
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
   volunteerProfile: VolunteerProfile | null = null;
-
+  volunteerProfileDialog: boolean = false;
+  participations: Participation[] = [];
   activities: Activity[] = [];
 
   search: string = '';
@@ -110,7 +125,7 @@ export default class VolunteerProfileView extends Vue {
   ];
 
   get hasVolunteerProfile(): boolean {
-    return this.volunteerProfile != null && this.volunteerProfile.id != null;
+    return this.volunteerProfile != null && this.volunteerProfile.id !== null;
   }
 
   get volunteerData() {
@@ -131,9 +146,13 @@ export default class VolunteerProfileView extends Vue {
       this.userId = Number(this.$route.params.id);
       this.activities = await RemoteServices.getActivities();
 
-      if (this.volunteerProfile == null) {
+      if (!this.hasVolunteerProfile || this.userId != this.volunteerProfile?.volunteer?.id) {
         volunteer = await RemoteServices.getVolunteerProfile(this.userId);
         this.volunteerProfile = volunteer?.id ? volunteer : null;
+      }
+      if (this.volunteerProfile == null) {
+        this.participations = await RemoteServices.getVolunteerParticipations();
+        console.log(this.participations);
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -168,7 +187,26 @@ export default class VolunteerProfileView extends Vue {
   }
 
   newVolunteerProfile() {
-    // TO DO: open dialog
+    this.volunteerProfile = new VolunteerProfile();
+    this.volunteerProfileDialog = true;
+  }
+
+  async onSaveVolunteerProfile(volunteerProfile: VolunteerProfile) {
+    await this.$store.dispatch('loading');
+    try {
+      const updatedVolunteerProfile = await RemoteServices.getVolunteerProfile(this.userId);
+      this.volunteerProfile = updatedVolunteerProfile;
+      this.$store.commit('setVolunteerProfile', updatedVolunteerProfile);
+      this.volunteerProfileDialog = false;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  onCloseVolunteerProfileDialog() {
+    this.volunteerProfile = null;
+    this.volunteerProfileDialog = false;
   }
 }
 </script>
