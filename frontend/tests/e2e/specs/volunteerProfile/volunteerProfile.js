@@ -63,5 +63,24 @@ describe('VolunteerProfile', () => {
             .eq(1)
             .get('.icon-wrapper')
             .should('contain.text', '1');
+
+        cy.logout();
+
+        // as an unauthenticated user, check if the new profile is listed in the list of all volunteer profiles
+        cy.get('[data-cy="profiles"]').click();
+        cy.get('[data-cy="view-profiles"]').click();
+
+        cy.wait('@profilesList');
+
+        cy.get('[data-cy="volunteerProfilesTable"] tbody tr')
+            .should('have.length', 1)
+            .eq(0)
+            .children()
+            .should('have.length', 5)
+
+        cy.get('[data-cy="volunteerProfilesTable"] tbody tr')
+            .eq(0).children().eq(0).should('contain', VOLUNTEER_NAME);
+        cy.get('[data-cy="volunteerProfilesTable"] tbody tr')
+            .eq(0).children().eq(1).should('contain', SHORTBIO);
     });
 });
