@@ -56,6 +56,10 @@ Cypress.Commands.add('deleteAllButArs', () => {
     credentials: credentials,
   });
   cy.task('queryDatabase', {
+    query: "DELETE FROM INSTITUTION_PROFILE",
+    credentials: credentials,
+  });
+  cy.task('queryDatabase', {
     query: "DELETE FROM INSTITUTIONS",
     credentials: credentials,
   });
@@ -249,6 +253,33 @@ Cypress.Commands.add('createDatabaseInfoForAssessments', () => {
 Cypress.Commands.add('createDatabaseInfoForVolunteerAssessments', () => {
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(1, "Muito bom!", 2, 3),
+    credentials: credentials,
+  })
+});
+
+Cypress.Commands.add('createDatabaseInfoForInstitutionProfile', () => {
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + INSTITUTION_COLUMNS + generateInstitutionTuple(1, "DEMO INSTITUTION", "000000000"),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + USER_COLUMNS + generateUserTuple(2, "MEMBER","DEMO-MEMBER", "MEMBER", 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + AUTH_USERS_COLUMNS + generateAuthUserTuple(2, "DEMO", "demo-member", 2),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + USER_COLUMNS + generateUserTuple(3, "VOLUNTEER","DEMO-VOLUNTEER", "VOLUNTEER", "NULL"),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + AUTH_USERS_COLUMNS + generateAuthUserTuple(3, "DEMO", "demo-volunteer", 3),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(1, "Muito bom!", 1, 3),
     credentials: credentials,
   })
 });

@@ -149,7 +149,7 @@
           </v-btn>
         </template>
         <v-list dense>
-          <v-list-item v-if="isMember" :to="`/profiles/institution/${this.institutionId}`" data-cy="member-profile">
+          <v-list-item v-if="isMember" :to="`/profiles/institution/${this.institutionId}`" @click="reloadPage" data-cy="member-profile">
             <v-list-item-action>
               <v-icon>fas fa-address-card</v-icon>
             </v-list-item-action>
@@ -349,6 +349,10 @@ export default class TopBar extends Vue {
   drawer: boolean = false;
 
   institutionId: number | null = null;
+
+  reloadPage(){
+    window.location.reload();
+  }
 
   get isLoggedIn() {
     return this.$store.getters.isLoggedIn;
