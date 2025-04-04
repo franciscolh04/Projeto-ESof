@@ -114,11 +114,6 @@ export default class VolunteerProfileDialog extends Vue {
   isFormValid = false;
   cypressCondition: boolean = false;
 
-  // really needed?
-  shortBioRules = [
-    (v: string) => (v?.trim().length >= 10) || 'The short bio must be longer than 10 characters'
-  ];
-
   search: string = '';
   headers: object = [
     {
@@ -174,13 +169,8 @@ export default class VolunteerProfileDialog extends Vue {
       return;
 
     try {
-      // Ensure we trim the bio before sending
-      const profileToCreate = {
-        ...this.newVolunteerProfile,
-        shortBio: this.newVolunteerProfile.shortBio.trim(),
-      };
+      const result = await RemoteServices.createVolunteerProfile(this.newVolunteerProfile);
 
-      const result = await RemoteServices.createVolunteerProfile(profileToCreate);
       this.$emit('create-volunteerProfile', result);
       this.closeDialog();
     } catch (error) {
