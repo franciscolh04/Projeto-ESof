@@ -153,6 +153,14 @@ public class ActivitySuggestion {
         this.volunteer.addActivitySuggestion(this);
     }
 
+    public void approve() {
+        setState(ActivitySuggestion.State.APPROVED);
+    }
+
+    public void reject() {
+        setState(ActivitySuggestion.State.REJECTED);
+    }
+
     private void verifyInvariants() {
         descriptionIsLongEnough();
         nameIsUnique();
