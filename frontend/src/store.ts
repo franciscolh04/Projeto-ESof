@@ -5,6 +5,7 @@ import TokenAuthUser from '@/models/user/TokenAuthUser';
 import AuthUser from '@/models/user/AuthUser';
 import RegisterUser from '@/models/user/RegisterUser';
 import Activity from '@/models/activity/Activity';
+import InstitutionProfile from './models/institutionProfile/InstitutionProfile';
 import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
 
 interface State {
@@ -16,6 +17,7 @@ interface State {
   notificationMessageList: string[];
   loading: boolean;
   activity: Activity | null;
+  institutionProfile: InstitutionProfile | null;
   activitySuggestion: ActivitySuggestion | null;
 }
 
@@ -28,6 +30,7 @@ const state: State = {
   notificationMessageList: [],
   loading: false,
   activity: null,
+  institutionProfile: null,
   activitySuggestion: null
 };
 
@@ -50,6 +53,10 @@ export default new Vuex.Store({
       if (activity) {
         state.activity = JSON.parse(activity);
       }
+      const institutionProfile = localStorage.getItem('institutionProfile');
+      if (institutionProfile) {
+        state.institutionProfile = JSON.parse(institutionProfile);
+      }
       const activitySuggestion = localStorage.getItem('activitySuggestion');
       if (activitySuggestion) {
         state.activitySuggestion = JSON.parse(activitySuggestion);
@@ -68,6 +75,8 @@ export default new Vuex.Store({
       state.user = null;
       localStorage.setItem('activity', '');
       state.activity = null;
+      localStorage.setItem('institutionProfile', '');
+      state.institutionProfile = null;
       localStorage.setItem('activitySuggestion', '');
       state.activitySuggestion = null;
     },
@@ -96,6 +105,10 @@ export default new Vuex.Store({
     setActivity(state: State, activity: Activity) {
       localStorage.setItem('activity', JSON.stringify(activity));
       state.activity = activity;
+    },
+    setInstitutionProfile(state: State, institutionProfile: InstitutionProfile) {
+      localStorage.setItem('institutionProfile', JSON.stringify(institutionProfile));
+      state.institutionProfile = institutionProfile;
     },
     setActivitySuggestion(state: State, activitySuggestion: ActivitySuggestion) {
       localStorage.setItem('activitySuggestion', JSON.stringify(activitySuggestion));
@@ -149,6 +162,9 @@ export default new Vuex.Store({
     async setActivity({ commit }, activity: Activity) {
       commit('setActivity', activity);
     },
+    async setInstitutionProfile({ commit }, institutionProfile: InstitutionProfile) {
+      commit('setInstitutionProfile', institutionProfile);
+    },
     async setActivitySuggestion({ commit }, activitySuggestion: ActivitySuggestion) {
       commit('setActivitySuggestion', activitySuggestion);
     }
@@ -193,6 +209,9 @@ export default new Vuex.Store({
     },
     getActivity(state: State): Activity | null {
       return state.activity;
+    },
+    getInstitutionProfile(state: State): InstitutionProfile | null {
+      return state.institutionProfile;
     },
     getActivitySuggestion(state: State): ActivitySuggestion | null {
       return state.activitySuggestion;

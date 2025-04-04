@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.profile.dto.InstitutionPro
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @RestController()
@@ -25,10 +26,16 @@ public class InstitutionProfileController {
         return institutionProfileService.getInstitutionProfile(institutionId);
     }
 
+    @GetMapping("/profiles/view/institutionProfiles")
+    public List<InstitutionProfileDto> getAllInstitutionProfiles(Principal principal) {
+        return institutionProfileService.getAllInstitutionProfiles();
+    }
+
     @PostMapping("/profile/institution")
     @PreAuthorize("(hasRole('ROLE_MEMBER'))")
     public InstitutionProfileDto createInstitutionProfile(Principal principal, @Valid @RequestBody InstitutionProfileDto institutionProfileDto) {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return institutionProfileService.createInstitutionProfile(userService.getInstitution(userId).getId(), institutionProfileDto);
     }
+
 }

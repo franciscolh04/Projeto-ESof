@@ -15,6 +15,7 @@ import Enrollment from '@/models/enrollment/Enrollment';
 import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
+import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
 import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
 
 const httpClient = axios.create();
@@ -796,7 +797,7 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
   }
-
+  
   static async deleteTheme(themeId: number): Promise<Theme[]> {
     return httpClient
         .delete(`/themes/${themeId}/delete`)
@@ -869,6 +870,43 @@ export default class RemoteServices {
           .catch(async (error) => {
               throw Error(await this.errorMessage(error));
           });
+  }
+
+  // Institution Profile Controller
+
+  static async getInstitutionProfiles(): Promise<InstitutionProfile[]> {
+    return httpClient
+      .get('/profiles/view/institutionProfiles')
+      .then((response) => {
+        return response.data.map((profile: any) => {
+          return new InstitutionProfile(profile);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getInstitutionProfile(institutionId: number): Promise<InstitutionProfile> {
+    return httpClient
+      .get(`/profile/institution/${institutionId}`)
+      .then((response) => {
+        return new InstitutionProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createInstitutionProfile(institutionProfile: InstitutionProfile): Promise<InstitutionProfile> {
+    return httpClient
+      .post('/profile/institution', institutionProfile)
+      .then((response) => {
+        return new InstitutionProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   // Error
