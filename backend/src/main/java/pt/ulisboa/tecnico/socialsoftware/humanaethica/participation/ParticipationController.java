@@ -29,6 +29,11 @@ public class ParticipationController {
         return participationService.getVolunteerParticipations(userId);
     }
 
+    @GetMapping("/participations/volunteer/{userId}")
+    public List<ParticipationDto> getVolunteerParticipationsById(@PathVariable Integer userId) {
+        return participationService.getVolunteerParticipations(userId);
+    }
+
     @PostMapping("/activities/{activityId}/participations")
     @PreAuthorize("(hasRole('ROLE_MEMBER') and hasPermission(#activityId, 'ACTIVITY.MEMBER'))")
     public ParticipationDto createParticipation(@PathVariable Integer activityId, @Valid @RequestBody ParticipationDto participationDto) {
