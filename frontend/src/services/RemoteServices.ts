@@ -17,6 +17,7 @@ import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
 import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
 import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
+import VolunteerProfile from '@/models/volunteerProfile/VolunteerProfile';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -548,6 +549,19 @@ export default class RemoteServices {
         });
   }
 
+  static async getVolunteerParticipationsById(userId: number): Promise<Participation[]> {
+    return httpClient
+        .get(`/participations/volunteer/${userId}`)
+        .then((response) => {
+          return response.data.map((participation: any) => {
+            return new Participation(participation);
+          });
+        })
+        .catch(async (error) => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
   static async getActivityParticipations(
       activityId: number | null,
   ): Promise<Participation[]> {
@@ -810,7 +824,7 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
   }
-
+  
   // Activity Suggestion Controller
 
   static async getActivitySuggestionsByInstitution(institutionId: number): Promise<ActivitySuggestion[]> {
@@ -903,6 +917,43 @@ export default class RemoteServices {
       .post('/profile/institution', institutionProfile)
       .then((response) => {
         return new InstitutionProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Volunteer Profile Controller
+
+  static async getVolunteerProfiles(): Promise<VolunteerProfile[]> {
+    return httpClient
+      .get('/profiles/volunteer')
+      .then((response) => {
+        return response.data.map((profile: any) => {
+          return new VolunteerProfile(profile);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getVolunteerProfile(volunteerId: number): Promise<VolunteerProfile> {
+    return httpClient
+      .get(`/profile/volunteer/${volunteerId}`)
+      .then((response) => {
+        return new VolunteerProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createVolunteerProfile(volunteerProfile: VolunteerProfile): Promise<VolunteerProfile> {
+    return httpClient
+      .post('/profile/volunteer', volunteerProfile)
+      .then((response) => {
+        return new VolunteerProfile(response.data);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

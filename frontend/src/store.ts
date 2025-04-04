@@ -7,6 +7,7 @@ import RegisterUser from '@/models/user/RegisterUser';
 import Activity from '@/models/activity/Activity';
 import InstitutionProfile from './models/institutionProfile/InstitutionProfile';
 import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
+import VolunteerProfile from '@/models/volunteerProfile/VolunteerProfile';
 
 interface State {
   token: string;
@@ -19,6 +20,7 @@ interface State {
   activity: Activity | null;
   institutionProfile: InstitutionProfile | null;
   activitySuggestion: ActivitySuggestion | null;
+  volunteerProfile: VolunteerProfile | null;
 }
 
 const state: State = {
@@ -31,7 +33,8 @@ const state: State = {
   loading: false,
   activity: null,
   institutionProfile: null,
-  activitySuggestion: null
+  activitySuggestion: null,
+  volunteerProfile: null
 };
 
 Vue.use(Vuex);
@@ -61,6 +64,10 @@ export default new Vuex.Store({
       if (activitySuggestion) {
         state.activitySuggestion = JSON.parse(activitySuggestion);
       }
+      const volunteerProfile = localStorage.getItem('volunteerProfile');
+      if (volunteerProfile) {
+        state.volunteerProfile = JSON.parse(volunteerProfile);
+      }
     },
     login(state, authResponse: TokenAuthUser) {
       localStorage.setItem('token', authResponse.token);
@@ -79,6 +86,8 @@ export default new Vuex.Store({
       state.institutionProfile = null;
       localStorage.setItem('activitySuggestion', '');
       state.activitySuggestion = null;
+      localStorage.setItem('volunteerProfile', '');
+      state.volunteerProfile = null;
     },
     error(state, errorMessage: string) {
       state.error = true;
@@ -113,6 +122,10 @@ export default new Vuex.Store({
     setActivitySuggestion(state: State, activitySuggestion: ActivitySuggestion) {
       localStorage.setItem('activitySuggestion', JSON.stringify(activitySuggestion));
       state.activitySuggestion = activitySuggestion;
+    },
+    setVolunteerProfile(state: State, volunteerProfile: VolunteerProfile) {
+      localStorage.setItem('volunteerProfile', JSON.stringify(volunteerProfile));
+      state.volunteerProfile = volunteerProfile;
     }
   },
   actions: {
@@ -136,8 +149,8 @@ export default new Vuex.Store({
     },
     async userLogin({ commit }, user: RegisterUser) {
       const authResponse = await RemoteServices.userLogin(
-          user.username,
-          user.password,
+            user.username,
+            user.password,
       );
       commit('login', authResponse);
     },
@@ -167,6 +180,9 @@ export default new Vuex.Store({
     },
     async setActivitySuggestion({ commit }, activitySuggestion: ActivitySuggestion) {
       commit('setActivitySuggestion', activitySuggestion);
+    },
+    async setVolunteerProfile({ commit }, volunteerProfile: VolunteerProfile) {
+      commit('setVolunteerProfile', volunteerProfile);
     }
   },
   getters: {
@@ -215,6 +231,9 @@ export default new Vuex.Store({
     },
     getActivitySuggestion(state: State): ActivitySuggestion | null {
       return state.activitySuggestion;
+    },
+    getVolunteerProfile(state: State): VolunteerProfile | null {
+      return state.volunteerProfile;
     }
   },
 });

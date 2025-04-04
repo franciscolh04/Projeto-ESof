@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Volunteer Profiles -->
     <v-card class="table">
       <v-card-title>
         <h2>Volunteer Profiles</h2>
@@ -11,12 +12,26 @@
         disable-pagination
         :hide-default-footer="true"
         :mobile-breakpoint="0"
+        data-cy="volunteerProfilesTable"
       >
         <template v-slot:item.volunteer.creationDate="{ item }">
           {{ ISOtoString(item.volunteer.creationDate) }}
         </template>
         <template v-slot:item.volunteer.lastAccess="{ item }">
           {{ ISOtoString(item.volunteer.lastAccess) }}
+        </template>
+        <template v-slot:[`item.action`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                class="mr-2 action-button"
+                @click="showVolunteerProfile(item)"
+                v-on="on"
+                >fas fa-eye
+              </v-icon>
+            </template>
+            <span>Show Volunteer Profile</span>
+          </v-tooltip>
         </template>
         <template v-slot:top>
           <v-card-title>
@@ -80,12 +95,13 @@ import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
 import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
 import RemoteServices from '@/services/RemoteServices';
+import VolunteerProfile from '@/models/volunteerProfile/VolunteerProfile';
 
 @Component({
   methods: { ISOtoString },
 })
 export default class ProfilesListView extends Vue {
-  //volunteerProfiles: VolunteerProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  volunteerProfiles: VolunteerProfile[] = [];
   institutionProfiles: InstitutionProfile[] = [];
 
   search: string = '';
@@ -151,6 +167,7 @@ export default class ProfilesListView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
+      this.volunteerProfiles = await RemoteServices.getVolunteerProfiles();
       this.institutionProfiles = await RemoteServices.getInstitutionProfiles();
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -161,6 +178,11 @@ export default class ProfilesListView extends Vue {
   async showInstitutionProfile(institutionProfile: InstitutionProfile) {
     await this.$store.dispatch('setInstitutionProfile', institutionProfile);
     await this.$router.push({ name: 'institution-profile', params: { id: String(institutionProfile.institution.id) } });
+  }
+
+  async showVolunteerProfile(volunteerProfile: VolunteerProfile) {
+    await this.$store.dispatch('setVolunteerProfile', volunteerProfile);
+    await this.$router.push({ name: 'volunteer-profile', params: { id: String(volunteerProfile.volunteer.id) } });
   }
 }
 </script>
