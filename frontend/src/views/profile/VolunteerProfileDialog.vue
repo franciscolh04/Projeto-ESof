@@ -154,7 +154,7 @@ export default class VolunteerProfileDialog extends Vue {
   ];
 
   created() {
-    this.newVolunteerProfile = new VolunteerProfile(this.volunteerProfile);
+    this.newVolunteerProfile = new VolunteerProfile();
     this.newVolunteerProfile.shortBio = '';
   }
 

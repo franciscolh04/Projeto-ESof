@@ -139,22 +139,16 @@ export default class VolunteerProfileView extends Vue {
   }
 
   async created() {
-    let volunteer: VolunteerProfile;
-    this.volunteerProfile = this.$store.getters.getVolunteerProfile;
+    await this.fetchVolunteerProfile();
+  }
 
+  async fetchVolunteerProfile() {
     await this.$store.dispatch('loading');
     try {
       this.userId = Number(this.$route.params.id);
       this.activities = await RemoteServices.getActivities();
-
-      if (!this.hasVolunteerProfile || this.userId != this.volunteerProfile?.volunteer?.id) {
-        volunteer = await RemoteServices.getVolunteerProfile(this.userId);
-        this.volunteerProfile = volunteer?.id ? volunteer : null;
-      }
-      if (this.volunteerProfile == null) {
-        this.participations = await RemoteServices.getVolunteerParticipations();
-        console.log(this.participations);
-      }
+      this.volunteerProfile = await RemoteServices.getVolunteerProfile(this.userId) || null;
+      this.participations = await RemoteServices.getVolunteerParticipations() || [];
     } catch (error) {
       await this.$store.dispatch('error', error);
       this.volunteerProfile = null;
@@ -192,17 +186,9 @@ export default class VolunteerProfileView extends Vue {
     this.volunteerProfileDialog = true;
   }
 
-  async onSaveVolunteerProfile(volunteerProfile: VolunteerProfile) {
-    await this.$store.dispatch('loading');
-    try {
-      const updatedVolunteerProfile = await RemoteServices.getVolunteerProfile(this.userId);
-      this.volunteerProfile = updatedVolunteerProfile;
-      this.$store.commit('setVolunteerProfile', updatedVolunteerProfile);
-      this.volunteerProfileDialog = false;
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+  async onSaveVolunteerProfile() {
+    await this.fetchVolunteerProfile();
+    this.volunteerProfileDialog = false;
   }
 
   onCloseVolunteerProfileDialog() {
