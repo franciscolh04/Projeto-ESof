@@ -20,16 +20,16 @@ describe('VolunteerProfile', () => {
         cy.demoVolunteerLogin();
 
         // go to the create page
-        cy.intercept('GET', 'participations/volunteer').as('availableParticipations')
+        cy.intercept('GET', 'participations/volunteer/3').as('availableParticipations')
         cy.intercept('POST', '/profile/volunteer').as('profileInfo');
         cy.intercept('GET', '/profiles/volunteer').as('profilesList')
 
         cy.get('[data-cy="profiles"]').click();
         cy.get('[data-cy="volunteer-profile"]').click()
-
+        
         // open dialog and fill form
         cy.get('[data-cy="newVolunteerProfile"]').click();
-
+        
         cy.wait('@availableParticipations');
 
         cy.get('[data-cy="shortBio"]').type(SHORTBIO);
