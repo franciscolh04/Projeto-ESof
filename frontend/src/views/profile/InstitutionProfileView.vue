@@ -1,30 +1,47 @@
 <template>
   <div class="container">
     <!-- TODO: Add creation button here (only if there is no profile) -->
-    <div>
-      <h1>Institution: SHOW INSTITUTION NAME HERE</h1>
+    <div v-if="!hasInstitutionProfile">
+      <h1>Institution Profile</h1>
       <div class="text-description">
-        <p><strong>Short Description: </strong> SHOW SHORT DESCRIPTION HERE</p>
+        <p> No institution profile found. Click the button below to create a new one! </p>
+      </div>
+      <v-btn color="primary" @click="newInstitutionProfile" data-cy="newInstitutionProfile">
+        Create Institution Profile
+      </v-btn>
+    </div>
+    <institutionProfile-dialog 
+        v-if="!hasInstitutionProfile && institutionProfileDialog"
+        v-model="institutionProfileDialog"
+        :institutionProfile="institutionProfile"
+        :assessments="assessments"
+        v-on:create-institutionProfile="onSaveInstitutionProfile"
+        v-on:close-institutionProfile-dialog="onCloseInstitutionProfileDialog"
+    />
+    <div v-if="hasInstitutionProfile">
+      <h1>Institution: {{ institutionProfile?.institution?.name || 'N/A' }}</h1>
+      <div class="text-description">
+        <p><strong>Short Description: </strong> {{ institutionProfile?.shortDescription || 'N/A' }}</p>
       </div>
       <div class="stats-container">
-        <div class="items">
-          <div ref="institutionId" class="icon-wrapper">
-            <span>42</span>
+        <div class="items" v-for="(stat, index) in stats" :key="index">
+          <div class="icon-wrapper">
+            <span>{{ stat.value % 1 === 0 ? stat.value : Number(stat.value).toFixed(2) }}</span>
           </div>
           <div class="project-name">
-            <p>Total Members</p>
+            <p>{{ stat.label }}</p>
           </div>
         </div>
-        <!-- TODO: Change 42 above and add other fields here -->
-     </div>
+      </div>
 
-      <div>
+      <div v-if="hasAssessments">
         <h2>Selected Assessments</h2>
         <div>
           <v-card class="table">
             <v-data-table
               :headers="headers"
               :search="search"
+              :items="institutionProfile?.selectedAssessments"
               disable-pagination
               :hide-default-footer="true"
               :mobile-breakpoint="0"
@@ -55,14 +72,23 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
+import InstitutionProfile from '@/models/institutionProfile/InstitutionProfile';
+import InstitutionProfileDialog from '@/views/profile/InstitutionProfileDialog.vue';
+import RemoteServices from '@/services/RemoteServices';
+import Assessment from '@/models/assessment/Assessment';
 
 @Component({
-  methods: { ISOtoString },
   components: {
-  }
+    'institutionProfile-dialog': InstitutionProfileDialog,
+  },
+  methods: { ISOtoString },
 })
 export default class InstitutionProfileView extends Vue {
   institutionId: number = 0;
+  institutionProfile: InstitutionProfile | null = null;
+  assessments: Assessment[] = [];
+
+  institutionProfileDialog: boolean = false;
 
   search: string = '';
   headers: object = [
@@ -86,18 +112,70 @@ export default class InstitutionProfileView extends Vue {
     }
   ];
 
-  async created() {
-    await this.$store.dispatch('loading');
+  get stats() {
+    return [
+      { label: 'Total Members', value: this.institutionProfile?.numMembers || 0 },
+      { label: 'Total Assessments', value: this.institutionProfile?.numAssessments || 0 },
+      { label: 'Total Activities', value: this.institutionProfile?.numActivities || 0 },
+      { label: 'Total Volunteers', value: this.institutionProfile?.numVolunteers || 0 },
+      { label: 'Average Rating', value: this.institutionProfile?.averageRating || 0 }
+    ];
+  }
 
+  get hasAssessments(): boolean {
+    return this.institutionProfile?.selectedAssessments != null 
+              && this.institutionProfile?.selectedAssessments.length != 0;
+  }
+
+  get hasInstitutionProfile(): boolean {
+    return this.institutionProfile != null && this.institutionProfile.id !== null;
+  }
+
+  async created() {
+    let institution: InstitutionProfile;
+
+    this.institutionProfile = this.$store.getters.getInstitutionProfile;
+
+    await this.$store.dispatch('loading');
     try {
       this.institutionId = Number(this.$route.params.id);
 
-      // TODO
+      if (!this.hasInstitutionProfile || this.institutionId != this.institutionProfile?.institution?.id ) {
+        institution = await RemoteServices.getInstitutionProfile(this.institutionId);
+        this.institutionProfile = institution?.id ? institution : null;
+        if(this.institutionProfile == null){
+          this.assessments = await RemoteServices.getInstitutionAssessments(this.institutionId);
+        }
+      }
+
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+      this.institutionProfile = null;
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  newInstitutionProfile(){
+    this.institutionProfile = new InstitutionProfile();
+    this.institutionProfileDialog = true;
+  }
+
+  onCloseInstitutionProfileDialog(){
+    this.institutionProfile = null;
+    this.institutionProfileDialog = false;
+  }
+
+  async onSaveInstitutionProfile(institutionProfile: InstitutionProfile){
+    await this.$store.dispatch('loading');
+    try {
+      this.institutionProfile = institutionProfile;
+      this.institutionProfileDialog = false;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
+
 }
 </script>
 

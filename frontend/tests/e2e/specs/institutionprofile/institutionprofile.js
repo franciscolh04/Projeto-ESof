@@ -1,0 +1,83 @@
+describe('InstitutionProfile', () => {
+    beforeEach(() => {
+      cy.deleteAllButArs()
+      cy.createDatabaseInfoForInstitutionProfile();
+    });
+  
+    afterEach(() => {
+      cy.deleteAllButArs()
+    });
+  
+    it('create institution profile', () => {
+
+      const SHORTDESCRIPTION = "Short description";
+      const NAMEVOLUNTEER='DEMO-VOLUNTEER'
+      const REVIEW='Muito bom!'
+      const NAMEINSTITUTION = 'DEMO INSTITUTION'
+
+      // login as member
+      cy.demoMemberLogin();
+
+      // go to the create page 
+      cy.intercept('GET', '/institutions/1/assessments').as('availableAccessments')
+      cy.intercept('POST', '/profile/institution').as('profileInfo');
+      cy.intercept('GET', '/profiles/view/institutionProfiles').as('profilesList')
+
+      cy.get('[data-cy="profiles"]').click();
+      cy.get('[data-cy="member-profile"]').click();
+      
+      // open dialog
+      
+      cy.get('[data-cy="newInstitutionProfile"]').click();
+      
+      cy.wait('@availableAccessments');
+
+      // fill form
+
+      cy.get('[data-cy="shortDescription"]').type(SHORTDESCRIPTION);
+
+      cy.get('[data-cy="institutionAssessmentsTable"] tbody tr')
+      .first()
+      .find('.v-data-table__checkbox')
+      .click()
+
+      // save profile
+      cy.get('[data-cy="saveInstitutionProfile"]').click();
+
+      cy.wait('@profileInfo');
+
+      // check results
+      cy.get('[data-cy="institutionAssessmentsTable"] tbody tr')
+      .should('have.length', 1)
+      .eq(0)
+      .children()
+      .should('have.length', 3)
+      cy.get('[data-cy="institutionAssessmentsTable"] tbody tr')
+        .eq(0).children().eq(0).should('contain', NAMEVOLUNTEER)
+      cy.get('[data-cy="institutionAssessmentsTable"] tbody tr')
+        .eq(0).children().eq(1).should('contain', REVIEW)
+
+      cy.get('.stats-container .items')
+      .eq(1)
+      .get('.icon-wrapper')
+      .should('contain.text', '1');
+      
+      cy.logout();
+
+      cy.get('[data-cy="profiles"]').click();
+      cy.get('[data-cy="view-profiles"]').click();
+
+      cy.wait('@profilesList');
+
+      cy.get('[data-cy="institutionProfilesTable"] tbody tr')
+      .should('have.length', 1)
+      .eq(0)
+      .children()
+      .should('have.length', 5)
+      cy.get('[data-cy="institutionProfilesTable"] tbody tr')
+        .eq(0).children().eq(0).should('contain', NAMEINSTITUTION)
+      cy.get('[data-cy="institutionProfilesTable"] tbody tr')
+        .eq(0).children().eq(1).should('contain', SHORTDESCRIPTION);
+  
+    });
+  });

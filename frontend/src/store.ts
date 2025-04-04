@@ -5,6 +5,8 @@ import TokenAuthUser from '@/models/user/TokenAuthUser';
 import AuthUser from '@/models/user/AuthUser';
 import RegisterUser from '@/models/user/RegisterUser';
 import Activity from '@/models/activity/Activity';
+import InstitutionProfile from './models/institutionProfile/InstitutionProfile';
+import ActivitySuggestion from '@/models/activitySuggestion/ActivitySuggestion';
 import VolunteerProfile from '@/models/volunteerProfile/VolunteerProfile';
 
 interface State {
@@ -16,6 +18,8 @@ interface State {
   notificationMessageList: string[];
   loading: boolean;
   activity: Activity | null;
+  institutionProfile: InstitutionProfile | null;
+  activitySuggestion: ActivitySuggestion | null;
   volunteerProfile: VolunteerProfile | null;
 }
 
@@ -28,6 +32,8 @@ const state: State = {
   notificationMessageList: [],
   loading: false,
   activity: null,
+  institutionProfile: null,
+  activitySuggestion: null,
   volunteerProfile: null
 };
 
@@ -50,6 +56,14 @@ export default new Vuex.Store({
       if (activity) {
         state.activity = JSON.parse(activity);
       }
+      const institutionProfile = localStorage.getItem('institutionProfile');
+      if (institutionProfile) {
+        state.institutionProfile = JSON.parse(institutionProfile);
+      }
+      const activitySuggestion = localStorage.getItem('activitySuggestion');
+      if (activitySuggestion) {
+        state.activitySuggestion = JSON.parse(activitySuggestion);
+      }
       const volunteerProfile = localStorage.getItem('volunteerProfile');
       if (volunteerProfile) {
         state.volunteerProfile = JSON.parse(volunteerProfile);
@@ -68,6 +82,10 @@ export default new Vuex.Store({
       state.user = null;
       localStorage.setItem('activity', '');
       state.activity = null;
+      localStorage.setItem('institutionProfile', '');
+      state.institutionProfile = null;
+      localStorage.setItem('activitySuggestion', '');
+      state.activitySuggestion = null;
       localStorage.setItem('volunteerProfile', '');
       state.volunteerProfile = null;
     },
@@ -97,6 +115,14 @@ export default new Vuex.Store({
       localStorage.setItem('activity', JSON.stringify(activity));
       state.activity = activity;
     },
+    setInstitutionProfile(state: State, institutionProfile: InstitutionProfile) {
+      localStorage.setItem('institutionProfile', JSON.stringify(institutionProfile));
+      state.institutionProfile = institutionProfile;
+    },
+    setActivitySuggestion(state: State, activitySuggestion: ActivitySuggestion) {
+      localStorage.setItem('activitySuggestion', JSON.stringify(activitySuggestion));
+      state.activitySuggestion = activitySuggestion;
+    },
     setVolunteerProfile(state: State, volunteerProfile: VolunteerProfile) {
       localStorage.setItem('volunteerProfile', JSON.stringify(volunteerProfile));
       state.volunteerProfile = volunteerProfile;
@@ -123,8 +149,8 @@ export default new Vuex.Store({
     },
     async userLogin({ commit }, user: RegisterUser) {
       const authResponse = await RemoteServices.userLogin(
-          user.username,
-          user.password,
+            user.username,
+            user.password,
       );
       commit('login', authResponse);
     },
@@ -148,6 +174,12 @@ export default new Vuex.Store({
     },
     async setActivity({ commit }, activity: Activity) {
       commit('setActivity', activity);
+    },
+    async setInstitutionProfile({ commit }, institutionProfile: InstitutionProfile) {
+      commit('setInstitutionProfile', institutionProfile);
+    },
+    async setActivitySuggestion({ commit }, activitySuggestion: ActivitySuggestion) {
+      commit('setActivitySuggestion', activitySuggestion);
     },
     async setVolunteerProfile({ commit }, volunteerProfile: VolunteerProfile) {
       commit('setVolunteerProfile', volunteerProfile);
@@ -193,6 +225,12 @@ export default new Vuex.Store({
     },
     getActivity(state: State): Activity | null {
       return state.activity;
+    },
+    getInstitutionProfile(state: State): InstitutionProfile | null {
+      return state.institutionProfile;
+    },
+    getActivitySuggestion(state: State): ActivitySuggestion | null {
+      return state.activitySuggestion;
     },
     getVolunteerProfile(state: State): VolunteerProfile | null {
       return state.volunteerProfile;

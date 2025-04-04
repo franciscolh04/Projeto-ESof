@@ -6,7 +6,7 @@ const credentials = {
   port: Cypress.env('psql_db_port'),
 };
 
-const INSTITUTION_COLUMNS = "institutions (id, active, confirmation_token, creation_date, email, name, nif, token_generation_date)";
+const   INSTITUTION_COLUMNS = "institutions (id, active, confirmation_token, creation_date, email, name, nif, token_generation_date)";
 const USER_COLUMNS = "users (user_type, id, creation_date, name, role, state, institution_id)";
 const AUTH_USERS_COLUMNS = "auth_users (auth_type, id, active, email, username, user_id)";
 const ACTIVITY_COLUMNS = "activity (id, application_deadline, creation_date, description, ending_date, name, participants_number_limit, region, starting_date, state, institution_id)";
@@ -14,6 +14,7 @@ const ENROLLMENT_COLUMNS = "enrollment (id, enrollment_date_time, motivation, ac
 const PARTICIPATION_COLUMNS = "participation (id, acceptance_date, member_rating, activity_id, volunteer_id)"
 const ASSESSMENT_COLUMNS = "assessment (id, review, review_date, institution_id, volunteer_id)";
 const REPORT_COLUMNS = "report (id, justification, activity_id, volunteer_id)";
+const ACTIVITY_SUGGESTION_COLUMNS = "activity_suggestion (id, application_deadline, creation_date, description, ending_date, name, participants_number_limit, region, starting_date, state, institution_id, volunteer_id)";
 
 
 const now = new Date();
@@ -48,6 +49,10 @@ Cypress.Commands.add('deleteAllButArs', () => {
     credentials: credentials,
   })
   cy.task('queryDatabase', {
+    query: "DELETE FROM ACTIVITY_SUGGESTION",
+    credentials: credentials,
+  });
+  cy.task('queryDatabase', {
     query: "DELETE FROM VOLUNTEER_PROFILE",
     credentials: credentials,
   });
@@ -57,6 +62,10 @@ Cypress.Commands.add('deleteAllButArs', () => {
   });
   cy.task('queryDatabase', {
     query: "DELETE FROM USERS WHERE NOT (name = 'ars')",
+    credentials: credentials,
+  });
+  cy.task('queryDatabase', {
+    query: "DELETE FROM INSTITUTION_PROFILE",
     credentials: credentials,
   });
   cy.task('queryDatabase', {
@@ -257,6 +266,44 @@ Cypress.Commands.add('createDatabaseInfoForVolunteerAssessments', () => {
   })
 });
 
+Cypress.Commands.add('createDatabaseInfoForInstitutionProfile', () => {
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + INSTITUTION_COLUMNS + generateInstitutionTuple(1, "DEMO INSTITUTION", "000000000"),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + USER_COLUMNS + generateUserTuple(2, "MEMBER","DEMO-MEMBER", "MEMBER", 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + AUTH_USERS_COLUMNS + generateAuthUserTuple(2, "DEMO", "demo-member", 2),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + USER_COLUMNS + generateUserTuple(3, "VOLUNTEER","DEMO-VOLUNTEER", "VOLUNTEER", "NULL"),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + AUTH_USERS_COLUMNS + generateAuthUserTuple(3, "DEMO", "demo-volunteer", 3),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(1, "Muito bom!", 1, 3),
+    credentials: credentials,
+  })
+});
+
+Cypress.Commands.add('createTwoDataBaseActivitySuggestions', () => {
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ACTIVITY_SUGGESTION_COLUMNS + generateActivitySuggestionTuple(1, "Activity Suggestion 1", "Test Description 1", "2025-04-01 12:00:00", "2025-04-05 09:00:00", "2025-04-10 18:00:00", 4, "Lisbon", "IN_REVIEW", 1, 3),
+    credentials: credentials,
+  });
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ACTIVITY_SUGGESTION_COLUMNS + generateActivitySuggestionTuple(2, "Activity Suggestion 2", "Test description 2", "2025-05-01 12:00:00", "2025-05-05 09:00:00", "2025-05-10 18:00:00", 4, "Lisbon", "IN_REVIEW", 1, 3),
+    credentials: credentials,
+  });
+});
+
 Cypress.Commands.add('createDatabaseInfoForVolunteerProfiles', () => {
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Enrollment is open",  tomorrow.toISOString(), tomorrow.toISOString(),
@@ -335,6 +382,22 @@ function generateParticipationTuple(id, activityId, volunteerId) {
 
 function generateAssessmentTuple(id, review, institutionId, volunteerId) {
   return "VALUES (" + id + ", '" + review + "', '2024-02-07 18:51:37.595713', '" + institutionId + "', " + volunteerId + ")";
+}
+
+function generateActivitySuggestionTuple(id, name, description, deadline, start, end, participants, region, state, institutionId, volunteerId) {
+  return "VALUES ('"
+      + id + "', '"
+      + deadline +
+      "', '2022-08-06 17:58:21.402146', '" +
+      description + "', '"
+      + end + "', '"
+      + name + "', '" +
+      participants + "', '"
+      + region + "', '"
+      + start + "', '"
+      + state + "', " +
+      institutionId + ", " +
+      volunteerId + ")";
 }
 
 function generateUpdateColumnTable(table, column, value, id) {
