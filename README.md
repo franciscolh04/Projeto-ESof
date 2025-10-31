@@ -8,6 +8,17 @@
   <a href="#license">License</a>
 </p>
 
+# Project Evaluation - Volunteer Profile Feature
+
+## First Delivery:
+19.30/20 
+
+## Second Delivery:
+19.65/20  
+
+## Final Grade:
+19.48/20
+
 # About
 
 **HumanaEthica** is an open-source broker that aims to connect charities and non-profit organizations with volunteers.
